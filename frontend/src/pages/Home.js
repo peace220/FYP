@@ -1,5 +1,6 @@
-import './App.css';
+import "../styles/App.css";
 import { useState } from "react";
+import Sidebar from "./sidebar/sidebar.jsx";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
@@ -11,44 +12,44 @@ function App() {
   };
 
   const handleButtonClick = async () => {
-
     try {
-      const response = await fetch('http://localhost:3000/api/store', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3000/api/store", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ value: inputValue })
+        body: JSON.stringify({ value: inputValue }),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error("Network response was not ok");
       }
 
       const data = await response.json();
       console.log(data);
       setMessage(data.message); // Display success message from the backend
     } catch (error) {
-      console.error('Failed to fetch:', error);
-      setMessage('Failed to store value'); // Display error message
+      console.error("Failed to fetch:", error);
+      setMessage("Failed to store value"); // Display error message
     }
   };
 
   const fetchStoredValues = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/values');
+      const response = await fetch("http://localhost:3000/api/values");
       const data = await response.json();
       setStoredValues(data);
     } catch (error) {
-      console.error('Failed to fetch values:', error);
+      console.error("Failed to fetch values:", error);
     }
   };
 
   return (
     <div className="App">
       <header className="App-header">
+        <Sidebar />
         <input
-          placeholder='Enter something'
+          placeholder="Enter something"
           value={inputValue}
           onChange={handleInputChange}
         />
