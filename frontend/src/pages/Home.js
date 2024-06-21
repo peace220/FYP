@@ -1,11 +1,17 @@
 import "../styles/App.css";
 import { useState } from "react";
 import Sidebar from "./sidebar/sidebar.jsx";
+import TTSButton from "./components/TTSButton";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
   const [message, setMessage] = useState("");
   const [storedValues, setStoredValues] = useState([]);
+  const questions = [
+    "What is your name?",
+    "How old are you?",
+    "Where are you from?",
+  ];
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -62,6 +68,13 @@ function App() {
             <li key={item.id}>{item.value}</li>
           ))}
         </ul>
+        <h1>Voice Activated Speech to Text</h1>
+        {questions.map((question, index) => (
+          <div key={index}>
+            <p>{question}</p>
+            <TTSButton text={question} />
+          </div>
+        ))}
       </header>
     </div>
   );
