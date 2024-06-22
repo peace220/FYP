@@ -1,4 +1,3 @@
-// src/components/TTSButton.js
 import React from 'react';
 import { useSpeechSynthesis } from 'react-speech-kit';
 
