@@ -5,7 +5,7 @@ const TTSButton = ({ text }) => {
   const { speak } = useSpeechSynthesis();
 
   return (
-    <div className="flex items-center mb-4">
+    <div class="container mb-4 flex items-center">
       <p className="mr-2">{text}</p>
       <button
         onClick={() => speak({ text })}
