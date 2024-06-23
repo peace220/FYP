@@ -1,7 +1,6 @@
-import "../styles/App.css";
 import { useState } from "react";
 import Sidebar from "./sidebar/sidebar.jsx";
-import Question from './components/Questions';
+import TTSButton from "./components/TTSButton";
 
 function App() {
   const [inputValue, setInputValue] = useState("");
@@ -70,8 +69,10 @@ function App() {
         </ul>
         <h1>Voice Activated Speech to Text</h1>
         {questions.map((question, index) => (
-        <Question key={index} text={question} />
-      ))}
+          <div key={index}>
+            <TTSButton text={question} />
+          </div>
+        ))}
       </header>
     </div>
   );
