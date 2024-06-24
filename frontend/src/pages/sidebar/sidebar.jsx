@@ -11,6 +11,7 @@ import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../../styles/sidebar.css";
 
 const Sidebar = () => {
+  
   return (
     <div className="bg-gray-800 text-white h-full">
       <ul className="space-y-4 p-4 text-lg mt-20">

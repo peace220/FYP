@@ -1,8 +1,7 @@
-import { useState } from "react";
 import Sidebar from "./sidebar/sidebar.jsx";
-import TTSButton from "./components/TTSButton";
+import TTSButton from "../components/TTSButton.jsx";
 
-function App() {
+function Home() {
   const questions = [
     "What is your name?",
     "How old are you?",
@@ -26,4 +25,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
