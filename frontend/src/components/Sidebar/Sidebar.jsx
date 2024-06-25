@@ -1,16 +1,16 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faHome,
   faCompass,
   faThList,
   faBook,
-} from "@fortawesome/free-solid-svg-icons";
-import "@fortawesome/fontawesome-svg-core/styles.css";
-import "../../styles/sidebar.css";
+  faLanguage,
+} from '@fortawesome/free-solid-svg-icons';
+import '@fortawesome/fontawesome-svg-core/styles.css';
+import '../../styles/sidebar.css';
 
 const Sidebar = () => {
-  
   return (
     <div className="bg-gray-800 text-white h-full">
       <ul className="space-y-4 p-4 text-lg mt-20">
@@ -39,6 +39,7 @@ const Sidebar = () => {
           </a>
         </li>
       </ul>
+
     </div>
   );
 };
