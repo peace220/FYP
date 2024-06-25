@@ -1,10 +1,10 @@
-import Sidebar from "./sidebar/sidebar.jsx";
-import TTSButton from "../components/TTSButton.jsx";
+import Sidebar from "../components/Sidebar/Sidebar.jsx";
+import TTSButton from "../components/Buttons/TTSButton.jsx";
 import Profile from "../components/profile/profile.jsx";
 
 function Home() {
   const questions = [
-  "你好吗"
+  "halo"
   ];
 
   return (

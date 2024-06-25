@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx"
 
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [username, setUsername] = useState("asasdsadd");
+  const [showLanguageSettingsModal, setShowLanguageSettingsModal] =
+    useState(false);
 
   const handleMouseEnter = () => {
     setDropdownVisible(true);
@@ -31,7 +34,10 @@ const Profile = () => {
               <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
                 Edit Profile
               </button>
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-100 flex justify-between items-center">
+              <button
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 flex justify-between items-center"
+                onClick={() => setShowLanguageSettingsModal(true)}
+              >
                 Language
                 <span className="flex items-center">
                   <i className="fas fa-globe mr-2"></i>
@@ -51,6 +57,9 @@ const Profile = () => {
           <span className="text-lg font-bold">Sign Up</span>
         </div>
       )}
+      {showLanguageSettingsModal ? (
+        <LanguageModal setModal={setShowLanguageSettingsModal} />
+      ) : null}
     </div>
   );
 };
