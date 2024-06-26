@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("asd");
   const [showLanguageSettingsModal, setShowLanguageSettingsModal] =
     useState(false);
 

@@ -1,27 +1,17 @@
 import Sidebar from "../components/Sidebar/Sidebar.jsx";
 import TTSButton from "../components/Buttons/TTSButton.jsx";
 import Profile from "../components/profile/profile.jsx";
-
+import Layout from "./Layout/Layout1.jsx";
 function Home() {
-  const questions = [
-  "hello"
-  ];
+  const questions = ["hello"];
 
   return (
-    <div className="App flex h-screen">
-      <Sidebar />
-      <div className="flex-1 ">
-        <header className="App-header shadow-xl h-12">
-        <div className="flex justify-end items-center h-full">
-            <Profile />
-          </div>
-        </header>
-        <div>
-          <h1 className="text-3xl font-bold mb-8">Home</h1>
-          <TTSButton text={questions}/>
-        </div>
+    <Layout>
+      <div>
+        <h1 className="text-3xl font-bold mb-8">Home</h1>
+        <TTSButton text={questions} />
       </div>
-    </div>
+    </Layout>
   );
 }
 

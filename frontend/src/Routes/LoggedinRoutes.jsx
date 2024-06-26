@@ -1,5 +1,5 @@
-import Login from "../components/Cards/Login/Login";
-import Signup from "../components/Cards/Signup/Signup";
+import Login from "../pages/Login/Login";
+import Signup from "../pages/Signup/Signup";
 import Home from "../pages/Home";
 const LoggedinRoutes = [
   {

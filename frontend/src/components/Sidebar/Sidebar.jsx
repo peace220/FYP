@@ -1,24 +1,24 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
   faCompass,
   faThList,
   faBook,
   faLanguage,
-} from '@fortawesome/free-solid-svg-icons';
-import '@fortawesome/fontawesome-svg-core/styles.css';
-import '../../styles/sidebar.css';
-
+} from "@fortawesome/free-solid-svg-icons";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import "../../styles/sidebar.css";
+import { Link } from "react-router-dom";
 const Sidebar = () => {
   return (
     <div className="bg-gray-800 text-white h-full">
       <ul className="space-y-4 p-4 text-lg mt-20">
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faHome} className="text-xl" />
-          <a href="#Home" className="hover:text-gray-400">
+          <Link to="/" className="hover:text-gray-400">
             Home
-          </a>
+          </Link>
         </li>
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faCompass} className="text-xl" />
@@ -39,7 +39,6 @@ const Sidebar = () => {
           </a>
         </li>
       </ul>
-
     </div>
   );
 };
