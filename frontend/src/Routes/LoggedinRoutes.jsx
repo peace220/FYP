@@ -1,7 +1,6 @@
 import Login from "../components/Cards/Login/Login";
 import Signup from "../components/Cards/Signup/Signup";
 import Home from "../pages/Home";
-import Sidebar from "../components/Sidebar/Sidebar";
 const LoggedinRoutes = [
   {
     path: "/",
@@ -12,7 +11,7 @@ const LoggedinRoutes = [
     element: <Login />,
   },
   {
-    path: "/join/Signup",
+    path: "/join/signup",
     element: <Signup />,
   },
 ];

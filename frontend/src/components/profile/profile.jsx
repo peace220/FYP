@@ -54,10 +54,10 @@ const Profile = () => {
         </>
       ) : (
         <div className="flex justify-end items-center h-12">
-          <Link to="/login" className="text-lg font-bold mr-4">
+          <Link to="/join/login" className="text-lg font-bold mr-4">
             Log in
           </Link>
-          <Link to="/signup" className="text-lg font-bold mr-4">
+          <Link to="/join/signup" className="text-lg font-bold mr-4">
             Sign Up
           </Link>
         </div>
