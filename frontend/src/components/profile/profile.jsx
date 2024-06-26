@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
-import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx"
+import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
+import { Link } from "react-router-dom"; 
 
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [username, setUsername] = useState("asasdsadd");
+  const [username, setUsername] = useState("");
   const [showLanguageSettingsModal, setShowLanguageSettingsModal] =
     useState(false);
 
@@ -46,15 +47,19 @@ const Profile = () => {
                 <FontAwesomeIcon icon={faGlobe} className="text-xl" />
               </button>
               <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                Logout
+                Log out
               </button>
             </div>
           )}
         </>
       ) : (
-        <div>
-          <span className="text-lg font-bold mr-4">Login</span>
-          <span className="text-lg font-bold">Sign Up</span>
+        <div className="flex justify-end items-center h-12">
+          <Link to="/login" className="text-lg font-bold mr-4">
+            Log in
+          </Link>
+          <Link to="/signup" className="text-lg font-bold mr-4">
+            Sign Up
+          </Link>
         </div>
       )}
       {showLanguageSettingsModal ? (

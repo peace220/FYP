@@ -4,7 +4,7 @@ import Profile from "../components/profile/profile.jsx";
 
 function Home() {
   const questions = [
-  "halo"
+  "hello"
   ];
 
   return (

@@ -1,13 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './styles/index.css';
-import Home from './pages/Home.js';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import LoggedinRoutes from "./Routes/LoggedinRoutes.jsx";
+import NonloggedinRoutes from "./Routes/nonLoggedinRoutes.jsx";
+import "./styles/index.css";
 
+let login = true;
+let routes = NonloggedinRoutes;
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+if (login) {
+  routes = LoggedinRoutes;
+}
+const router = createBrowserRouter(routes);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Home />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
-
