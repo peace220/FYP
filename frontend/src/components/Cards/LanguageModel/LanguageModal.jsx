@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faX
-} from '@fortawesome/free-solid-svg-icons';
-const LanguageChangeCard = (props) => {
-  const { setModal } = props;
+import { faX } from '@fortawesome/free-solid-svg-icons';
+import { translateText } from "../../../API/translation";
+
+const LanguageChangeCard = ({ setModal, setLanguage }) => {
   const [active, setActive] = useState("English");
+  const [translatedText, setTranslatedText] = useState('');
 
   const langs = [
     { lang: "English", code: "en" },
@@ -13,8 +13,15 @@ const LanguageChangeCard = (props) => {
     { lang: "Malay", code: "ms" },
   ];
 
-  let changeHandler = (e) => {
-    setActive(e.target.innerText || "");
+  useEffect(() => {
+    const textToTranslate = 'Hello, welcome to our website!';
+    translateText(textToTranslate, langs.find(lang => lang.lang === active).code)
+      .then(setTranslatedText);
+  }, [active]);
+
+  const changeHandler = (e) => {
+    const selectedLang = e.target.innerText;
+    setActive(selectedLang);
   };
 
   return (
@@ -23,10 +30,10 @@ const LanguageChangeCard = (props) => {
         <div className="flex justify-between">
           <span className="text-lg font-bold ">Choose a language</span>
           <button
-            onClick={() => setModal(false)} // Replace with your close modal function
+            onClick={() => setModal(false)}
             className="text-gray-400 hover:text-gray-500 focus:outline-none"
           >
-                 <FontAwesomeIcon icon={faX} />
+            <FontAwesomeIcon icon={faX} />
           </button>
         </div>
         <div className="flex flex-wrap">
@@ -43,6 +50,9 @@ const LanguageChangeCard = (props) => {
               {lang.lang}
             </div>
           ))}
+        </div>
+        <div className="mt-4">
+          <p>{translatedText}</p>
         </div>
       </div>
     </div>

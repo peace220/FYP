@@ -1,6 +1,4 @@
-import Sidebar from "../components/Sidebar/Sidebar.jsx";
 import TTSButton from "../components/Buttons/TTSButton.jsx";
-import Profile from "../components/profile/profile.jsx";
 import Layout from "./Layout/Layout1.jsx";
 function Home() {
   const questions = ["hello"];
