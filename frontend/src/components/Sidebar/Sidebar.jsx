@@ -27,12 +27,6 @@ const Sidebar = () => {
           </a>
         </li>
         <li className="flex items-center space-x-2 py-2">
-          <FontAwesomeIcon icon={faThList} className="text-xl" />
-          <a href="#Categories" className="hover:text-gray-400">
-            Categories
-          </a>
-        </li>
-        <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faBook} className="text-xl" />
           <a href="#My Courses" className="hover:text-gray-400">
             My Courses
