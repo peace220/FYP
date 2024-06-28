@@ -9,8 +9,8 @@ const Signup = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/signup', { username, email, password });
-      alert(response.data);
+      const response = await axios.post('http://localhost:5000/api/auth/signup', { username, email, password });
+      alert('Signup successful');
     } catch (error) {
       alert('Error during signup');
     }
