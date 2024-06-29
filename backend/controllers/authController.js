@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const jwt = require('jsonwebtoken');
 const { findUserByEmail } = require("../utils/userUtils");
 
 const signup = (req, res) => {
@@ -32,13 +33,12 @@ const login = (req, res) => {
     }
 
     const user = results[0];
-
     if (password != user.password) {
       return res.status(401).send({ auth: false, token: null });
     }
 
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: 86400 }); // 24 hours
-    res.status(200).send({ auth: true, token });
+    res.status(200).send({ auth: true, token , username:user.username});
   });
 };
 

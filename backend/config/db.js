@@ -17,17 +17,30 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
   console.log("Database checked/created...");
   db.changeUser({ database: "userdb" }, (err) => {
     if (err) throw err;
-    const createTableQuery = `
+    const createUsersTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id int AUTO_INCREMENT,
         username VARCHAR(255),
-        email VARCHAR(255),
+        email VARCHAR(255) UNIQUE,
         password VARCHAR(255),
         PRIMARY KEY(id)
       )`;
-    db.query(createTableQuery, (err, result) => {
+    db.query(createUsersTableQuery, (err, result) => {
       if (err) throw err;
       console.log("Users table checked/created...");
+    });
+
+    const createCoursesTableQuery = `
+      CREATE TABLE IF NOT EXISTS courses (
+        id int AUTO_INCREMENT,
+        user_id int,
+        course_name VARCHAR(255),
+        PRIMARY KEY(id),
+        FOREIGN KEY(user_id) REFERENCES users(id)
+      )`;
+    db.query(createCoursesTableQuery, (err, result) => {
+      if (err) throw err;
+      console.log("Courses table checked/created...");
     });
   });
 });

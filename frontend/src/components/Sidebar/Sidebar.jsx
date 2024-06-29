@@ -22,9 +22,9 @@ const Sidebar = () => {
         </li>
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faCompass} className="text-xl" />
-          <a href="#Discover" className="hover:text-gray-400">
-            Discover
-          </a>
+          <Link to="/discover" className="hover:text-gray-400">
+          Discover
+          </Link>
         </li>
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faBook} className="text-xl" />

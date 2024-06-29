@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 import Message from '../../../Collaborations/Messages';
 import ChatInput from '../../../Collaborations/Chatinput';
 
-const socket = io('http://localhost:4000'); 
+const socket = io('http://localhost:3000'); 
 
 const ChatWindow = () => {
   const [messages, setMessages] = useState([]);
