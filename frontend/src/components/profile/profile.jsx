@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
-import { Link } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -24,6 +24,12 @@ const Profile = () => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
+      <Link to="/userquestions" className="text-lg font-bold mr-4">
+        QuestionsForms
+      </Link>
+      <Link to="/questionform" className="text-lg font-bold mr-4">
+        QuestionsForms
+      </Link>
       {username ? (
         <>
           <div className="flex justify-end items-center h-12">
