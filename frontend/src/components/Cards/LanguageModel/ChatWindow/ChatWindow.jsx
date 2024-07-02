@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-import Message from '../../Collaborations/Messages';
-import ChatInput from '../../Collaborations/Chatinput';
+import Message from '../../../Collaborations/Messages';
+import ChatInput from '../../../Collaborations/Chatinput';
 
 const socket = io('http://localhost:3000'); 
 
