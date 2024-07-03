@@ -47,8 +47,6 @@ const Profile = () => {
   return (
     <div
       className="flex items-center relative"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       <Link to="/userquestions" className="text-lg font-bold mr-4">
         QuestionsForms
@@ -58,34 +56,36 @@ const Profile = () => {
       </Link>
       {username ? (
         <>
-          <div className="flex justify-end items-center h-12">
-            <span className="text-lg font-bold mr-10">{username}</span>
-          </div>
-
-          {dropdownVisible && (
-            <div className="absolute top-12 right-9 bg-white border border-gray-200 shadow-lg py-2 w-40">
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
-                Edit Profile
-              </button>
-              <button
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100 flex justify-between items-center"
-                onClick={() => setShowLanguageSettingsModal(true)}
-              >
-                Language
-                <span className="flex items-center">
-                  <i className="fas fa-globe mr-2"></i>
-                  asd
-                </span>
-                <FontAwesomeIcon icon={faGlobe} className="text-xl" />
-              </button>
-              <button
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                onClick={handleLogOutButton}
-              >
-                Log out
-              </button>
+          <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+            <div className="flex justify-end items-center h-12">
+              <span className="text-lg font-bold mr-10">{username}</span>
             </div>
-          )}
+
+            {dropdownVisible && (
+              <div className="absolute top-12 right-9 bg-white border border-gray-200 shadow-lg py-2 w-40">
+                <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                  Edit Profile
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 flex justify-between items-center"
+                  onClick={() => setShowLanguageSettingsModal(true)}
+                >
+                  Language
+                  <span className="flex items-center">
+                    <i className="fas fa-globe mr-2"></i>
+                    asd
+                  </span>
+                  <FontAwesomeIcon icon={faGlobe} className="text-xl" />
+                </button>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  onClick={handleLogOutButton}
+                >
+                  Log out
+                </button>
+              </div>
+            )}
+          </div>
         </>
       ) : (
         <div className="flex justify-end items-center h-12">
