@@ -1,5 +1,5 @@
 import React from "react";
-import ChatWindow from "../components/Cards/ChatWindow/ChatWindow";
+import ChatWindow from "../components/Cards/LanguageModel/ChatWindow/ChatWindow";
 import Layout from "./Layout/Layout1";
 
 const Collaboration = () => {

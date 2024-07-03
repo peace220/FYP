@@ -38,7 +38,7 @@ const login = (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: 86400 }); // 24 hours
-    res.status(200).send({ auth: true, token , username:user.username});
+    res.status(200).send({ auth: true, token});
   });
 };
 
@@ -54,4 +54,19 @@ const checkTable = (req, res) => {
   });
 };
 
-module.exports = { signup, login, checkTable };
+const getUserProfile = (req, res) => {
+  const userId = req.userId;
+
+  const sql = 'SELECT username FROM users WHERE id = ?';
+  db.query(sql, [userId], (err, results) => {
+    if (err) {
+      return res.status(500).send('Error retrieving user profile');
+    }
+    if (results.length === 0) {
+      return res.status(404).send('User not found');
+    }
+    res.status(200).json(results[0]);
+  });
+};
+
+module.exports = { signup, login, checkTable, getUserProfile };

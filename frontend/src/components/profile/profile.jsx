@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
 import { Link } from "react-router-dom";
-
+import axios
+ from "axios";
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [username, setUsername] = useState("");
@@ -18,6 +19,26 @@ const Profile = () => {
     setDropdownVisible(false);
   };
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await axios.get(
+            "http://localhost:5000/api/auth/profile",
+            {
+              headers: { "x-access-token": token },
+            }
+          );
+          setUsername(response.data.username);
+        } catch (error) {
+          console.error("Error fetching user profile", error);
+        }
+      }
+    };
+    fetchUserProfile();
+  }, []);
+  
   return (
     <div
       className="flex items-center relative"
