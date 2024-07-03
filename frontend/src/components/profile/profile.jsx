@@ -3,8 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
 import { Link } from "react-router-dom";
-import axios
- from "axios";
+import axios from "axios";
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [username, setUsername] = useState("");
@@ -17,6 +16,10 @@ const Profile = () => {
 
   const handleMouseLeave = () => {
     setDropdownVisible(false);
+  };
+
+  const handleLogOutButton = () => {
+    localStorage.removeItem("token");
   };
 
   useEffect(() => {
@@ -34,11 +37,13 @@ const Profile = () => {
         } catch (error) {
           console.error("Error fetching user profile", error);
         }
+      } else {
+        setUsername("");
       }
     };
     fetchUserProfile();
-  }, []);
-  
+  });
+
   return (
     <div
       className="flex items-center relative"
@@ -73,7 +78,10 @@ const Profile = () => {
                 </span>
                 <FontAwesomeIcon icon={faGlobe} className="text-xl" />
               </button>
-              <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+              <button
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                onClick={handleLogOutButton}
+              >
                 Log out
               </button>
             </div>
