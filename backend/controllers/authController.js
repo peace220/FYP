@@ -56,7 +56,6 @@ const checkTable = (req, res) => {
 
 const getUserProfile = (req, res) => {
   const userId = req.userId;
-
   const sql = 'SELECT username FROM users WHERE id = ?';
   db.query(sql, [userId], (err, results) => {
     if (err) {

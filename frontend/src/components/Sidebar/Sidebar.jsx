@@ -10,7 +10,7 @@ import "../../styles/sidebar.css";
 import { Link } from "react-router-dom";
 const Sidebar = () => {
   return (
-    <div className="bg-gray-800 text-white h-full">
+    <div className="bg-gray-800 text-white h-screen">
       <ul className="space-y-4 p-4 text-lg mt-20">
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faHome} className="text-xl" />

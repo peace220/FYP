@@ -4,6 +4,6 @@ const verifyToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/select', verifyToken, selectCourse);
-router.get('/', verifyToken, getCourses);
+router.get('/courses', verifyToken, getCourses);
 
 module.exports = router;

@@ -5,6 +5,7 @@ import Collaboration from "../pages/Collaboration";
 import Discover from "../pages/Discover"
 import QuestionForm from "../components/instructor/questions/questionsforms";
 import UserQuestion from "../components/instructor/questions/userQuestions";
+import CommentsSection from "../components/comments/commentSection";
 const sampleQuestions = [
   {
     id: 1,
@@ -46,6 +47,10 @@ const LoggedinRoutes = [
   {
     path:"/userquestions",
     element: <UserQuestion questions={sampleQuestions}/>,
+  },
+  {
+    path:"/commentSection",
+    element: <CommentsSection/>,
   }
 ];
 export default LoggedinRoutes;

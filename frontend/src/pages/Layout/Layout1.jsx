@@ -3,7 +3,7 @@ import Sidebar from "../../components/Sidebar/Sidebar";
 import Profile from "../../components/profile/profile";
 const Layout = ({ children }) => {
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full">
       <Sidebar />
       <div className="flex-1 ">
         <header className="App-header shadow-xl h-12">
