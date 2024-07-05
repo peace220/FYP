@@ -4,18 +4,18 @@ const getComments = (req, res) => {
   const sql = 'SELECT * FROM comments';
   db.query(sql, (err, results) => {
       if (err) throw err;
-      const comments = results.reduce((acc, comment) => {
-          if (!comment.parent_id) {
-              acc.push({ ...comment, replies: [] });
-          } else {
-              const parent = acc.find(c => c.id === comment.parent_id);
-              if (parent) {
-                  parent.replies.push(comment);
-              }
+      const comments = {};
+      results.forEach(comment => {
+          comments[comment.id] = { ...comment, replies: [] };
+      });
+      results.forEach(comment => {
+          if (comment.parent_id) {
+              comments[comment.parent_id].replies.push(comments[comment.id]);
           }
-          return acc;
-      }, []);
-      res.json(comments);
+      });
+
+      const topLevelComments = Object.values(comments).filter(comment => !comment.parent_id);
+      res.json(topLevelComments);
   });
 };
 

@@ -32,13 +32,11 @@ const CommentsSection = () => {
     const response = await axios.get(
       "http://localhost:5000/api/comments/comments"
     );
-    const data=response.data.replies;
-    console.log(data)
     setComments(response.data);
   };
   return (
     <Layout>
-      <div className="p-4 ">
+      <div className="p-4">
         <h2 className="text-xl font-bold mb-4">Comments</h2>
         <div className="mb-4">
           <textarea

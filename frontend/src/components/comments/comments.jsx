@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 const Comment = ({ comment }) => {
-  const [replies, setReplies] = useState([]);
-  const [replyText, setReplyText] = useState("");
+  const [replies, setReplies] = useState(comment.replies || []);
+  const [replyText, setReplyText] = useState('');
   const [showReplyBox, setShowReplyBox] = useState(false);
 
   const handleReply = async () => {
@@ -17,12 +17,11 @@ const Comment = ({ comment }) => {
           headers: { "x-access-token": localStorage.getItem("token") },
         }
       );
-      setReplies([...replies, response.data]);
+      setReplies([...replies, { ...response.data, replies: [] }]);
       setReplyText("");
       setShowReplyBox(false);
     }
   };
-
 
   return (
     <div className="p-4 border rounded-lg mb-4">
