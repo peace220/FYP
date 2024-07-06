@@ -1,21 +1,27 @@
 const db = require("../config/db");
 
 const getComments = (req, res) => {
-  const sql = 'SELECT * FROM comments';
+  const sql = `
+  SELECT comments.*, users.username 
+  FROM comments 
+  JOIN users ON comments.user_id = users.id
+`;
   db.query(sql, (err, results) => {
-      if (err) throw err;
-      const comments = {};
-      results.forEach(comment => {
-          comments[comment.id] = { ...comment, replies: [] };
-      });
-      results.forEach(comment => {
-          if (comment.parent_id) {
-              comments[comment.parent_id].replies.push(comments[comment.id]);
-          }
-      });
+    if (err) throw err;
 
-      const topLevelComments = Object.values(comments).filter(comment => !comment.parent_id);
-      res.json(topLevelComments);
+    const comments = {};
+    results.forEach((comment) => {
+      comments[comment.id] = { ...comment, replies: [] };
+    });
+    results.forEach((comment) => {
+      if (comment.parent_id) {
+        comments[comment.parent_id].replies.push(comments[comment.id]);
+      }
+    });
+    const topLevelComments = Object.values(comments).filter(
+      (comment) => !comment.parent_id
+    );
+    res.json(topLevelComments);
   });
 };
 

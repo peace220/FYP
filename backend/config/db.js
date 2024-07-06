@@ -47,16 +47,18 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     CREATE TABLE IF NOT EXISTS comments (
       id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT,
+      course_id INT,
       text TEXT NOT NULL,
       parent_id INT DEFAULT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES users(id),
-      FOREIGN KEY (parent_id) REFERENCES comments(id)
+      FOREIGN KEY (parent_id) REFERENCES comments(id),
+      FOREIGN KEY (course_id) REFERENCES courses(id)
     )`;
-  db.query(createCommentsTableQuery, (err, result) => {
-    if (err) throw err;
-    console.log("Courses table checked/created...");
-  });
+    db.query(createCommentsTableQuery, (err, result) => {
+      if (err) throw err;
+      console.log("Courses table checked/created...");
+    });
   });
 });
 

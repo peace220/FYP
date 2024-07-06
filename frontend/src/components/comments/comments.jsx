@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 const Comment = ({ comment }) => {
   const [replies, setReplies] = useState(comment.replies || []);
-  const [replyText, setReplyText] = useState('');
+  const [replyText, setReplyText] = useState("");
   const [showReplyBox, setShowReplyBox] = useState(false);
 
   const handleReply = async () => {
@@ -25,7 +25,9 @@ const Comment = ({ comment }) => {
 
   return (
     <div className="p-4 border rounded-lg mb-4">
-      <p>{comment.text}</p>
+      <p>
+        <strong>{comment.username}</strong>: {comment.text}
+      </p>
       <button
         onClick={() => setShowReplyBox(!showReplyBox)}
         className="text-blue-500 text-sm mt-2"

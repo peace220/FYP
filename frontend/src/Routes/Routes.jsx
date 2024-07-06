@@ -6,6 +6,7 @@ import Discover from "../pages/Discover"
 import QuestionForm from "../components/instructor/questions/questionsforms";
 import UserQuestion from "../components/instructor/questions/userQuestions";
 import CommentsSection from "../components/comments/commentSection";
+import InstructorMenu from "../components/instructor/instructorMenu";
 const sampleQuestions = [
   {
     id: 1,
@@ -51,6 +52,10 @@ const LoggedinRoutes = [
   {
     path:"/commentSection",
     element: <CommentsSection/>,
+  },
+  {
+    path:"/instructor",
+    element: <InstructorMenu/>,
   }
 ];
 export default LoggedinRoutes;

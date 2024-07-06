@@ -32,6 +32,7 @@ const CommentsSection = () => {
     const response = await axios.get(
       "http://localhost:5000/api/comments/comments"
     );
+    console.log(response.data);
     setComments(response.data);
   };
   return (

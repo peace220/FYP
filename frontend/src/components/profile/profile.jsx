@@ -57,6 +57,9 @@ const Profile = () => {
       <Link to="/commentSection" className="text-lg font-bold mr-4">
         QuestionsForms
       </Link>
+      <Link to="/instructor" className="text-lg font-bold mr-4">
+        instructor
+      </Link>
       {username ? (
         <>
           <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
