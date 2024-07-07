@@ -5,7 +5,7 @@ import Layout from "./Layout/Layout1";
 const Collaboration = () => {
   return (
     <Layout>
-    <div className="h-screen flex">
+    <div className="h-full flex">
       <div className="w-1/4 bg-gray-100 p-4">
         <h2 className="text-xl font-bold mb-4">Collaboration</h2>
       </div>

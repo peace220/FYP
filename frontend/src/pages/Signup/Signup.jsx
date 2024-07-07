@@ -21,7 +21,7 @@ const Signup = () => {
 
   return (
     <Layout>
-      <div className="flex justify-center items-center h-screen bg-gray-100">
+      <div className="flex justify-center items-center h-full bg-gray-100">
         <div className="w-full max-w-md">
           <form
             className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"

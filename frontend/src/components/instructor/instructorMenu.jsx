@@ -10,7 +10,7 @@ const instructorMenu = () => {
           Student
         </Link>
       </div>
-      <div className="flex justify-center h-screen bg-gray-100">
+      <div className="flex justify-center h-full bg-gray-100">
         <div className="w-full max-w-md mt-10">
           <div
             className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
