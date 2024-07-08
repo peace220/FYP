@@ -1,9 +1,111 @@
-import React from 'react';
+import React, { useState } from "react";
+import QuestionForm from "../questions/questionsforms";
 
-const CurriculumItem = ({ item }) => {
+const CurriculumItem = ({ item, updateItem, deleteItem }) => {
+  const [title, setTitle] = useState(item.title);
+  const [isTitleConfirmed, setIsTitleConfirmed] = useState(!!item.title);
+  const [showDelete, setShowDelete] = useState(false);
+  const [video, setVideo] = useState(null);
+
+  const saveTitle = () => {
+    updateItem(item.id, { ...item, title: title });
+    setIsTitleConfirmed(true);
+  };
+
+  const cancelTitle = () => {
+    setTitle("");
+    updateItem(item.id, { ...item, title: "" });
+    setIsTitleConfirmed(false);
+  };
+
+  const handleMouseEnter = () => {
+    setShowDelete(true);
+  };
+
+  const handleMouseLeave = () => {
+    setShowDelete(false);
+  };
+
+  const handleVideoChange = (e) => {
+    setVideo(e.target.files[0]);
+  };
+
+  const handleVideoUpload = () => {
+    console.log("Uploaded video:", video);
+  };
+
   return (
-    <div className="border p-2 mb-2 bg-white">
-      <p className="font-semibold">{item.type === 'lecture' ? `Lecture ${item.id}` : `Quiz ${item.id}`}: {item.title}</p>
+    <div className="border mb-2 p-3 bg-white space-y-2">
+      <div
+        className="flex justify-between items-center border-b-0 border-black"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <p className="font-semibold p-2">
+          {item.type === "lecture" ? `Lecture ${item.id}` : `Quiz ${item.id}`}:{" "}
+          {` ${item.title}`}
+        </p>
+
+        {showDelete && (
+          <button
+            onClick={() => deleteItem(item.id)}
+            className="bg-red-500 text-white px-2 py-1 rounded"
+          >
+            Delete
+          </button>
+        )}
+      </div>
+      {!isTitleConfirmed ? (
+        <>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter title"
+            className="w-full px-3 py-2 border rounded "
+          />
+          <div className="flex justify-end space-x-2">
+            <button
+              onClick={cancelTitle}
+              className="bg-red-500 text-white px-2 py-1 rounded"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={saveTitle}
+              className="bg-green-500 text-white px-2 py-1 rounded"
+            >
+              Confirm
+            </button>
+          </div>
+        </>
+      ) : (
+        <>
+          {item.type === "quiz" ? (
+            <QuestionForm />
+          ) : (
+            <div>
+              <input
+                type="file"
+                accept="video/*"
+                onChange={handleVideoChange}
+                className="w-full px-3 py-2 border rounded"
+              />
+              <button
+                onClick={handleVideoUpload}
+                className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Upload Video
+              </button>
+              {video && (
+                <div className="mt-2">
+                  <p>Selected video: {video.name}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 };

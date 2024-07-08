@@ -27,7 +27,6 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       )`;
     db.query(createUsersTableQuery, (err, result) => {
       if (err) throw err;
-      console.log("Users table checked/created...");
     });
 
     const createCoursesTableQuery = `
@@ -40,7 +39,6 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       )`;
     db.query(createCoursesTableQuery, (err, result) => {
       if (err) throw err;
-      console.log("Courses table checked/created...");
     });
 
     const createCommentsTableQuery = `
@@ -57,8 +55,90 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     )`;
     db.query(createCommentsTableQuery, (err, result) => {
       if (err) throw err;
-      console.log("Courses table checked/created...");
     });
+
+    const createSectionsTableQuery = `
+      CREATE TABLE IF NOT EXISTS sections (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        course_id INT,
+        title VARCHAR(255) NOT NULL,
+        description TEXT,
+        FOREIGN KEY(course_id) REFERENCES courses(id)
+      )`;
+    db.query(createSectionsTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createLecturesTableQuery = `
+    CREATE TABLE IF NOT EXISTS lectures (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      section_id INT,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      FOREIGN KEY(section_id) REFERENCES sections(id)
+    )`;
+    db.query(createLecturesTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createQuestionsTypeTableQuery = `
+    CREATE TABLE IF NOT EXISTS QuestionTypes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name varchar(100) NOT NULL
+  )`;
+    db.query(createQuestionsTypeTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createQuestionsTableQuery = `
+    CREATE TABLE IF NOT EXISTS Questions (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      question_text TEXT NOT NULL,
+      type_id INT NOT NULL,
+      FOREIGN KEY (type_id) REFERENCES QuestionTypes(id) ON DELETE CASCADE
+    )`;
+    db.query(createQuestionsTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    
+    const createAnswersTableQuery = `
+    CREATE TABLE IF NOT EXISTS Answers (
+      question_id INT NOT NULL,
+      option_id INT,
+      answer_text TEXT,
+      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
+      FOREIGN KEY (option_id) REFERENCES Options(id) ON DELETE CASCADE
+    )`;
+    db.query(createAnswersTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+    
+    const createUsersAnswersTableQuery = `
+    CREATE TABLE IF NOT EXISTS UsersAnswers (
+      user_id INT NOT NULL,
+      question_id INT NOT NULL,
+      selected_option_id INT,
+      answer_text TEXT,
+      FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
+      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
+      FOREIGN KEY (option_id) REFERENCES Options(id) ON DELETE CASCADE
+    )`;
+    db.query(createUsersAnswersTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createOptionsTableQuery = `
+    CREATE TABLE IF NOT EXISTS Options (
+      option_id INT AUTO_INCREMENT PRIMARY KEY,
+      question_id INT NOT NULL,
+      option_text VARCHAR(255) NOT NULL,
+      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE
+    )`;
+    db.query(createOptionsTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
   });
 });
 

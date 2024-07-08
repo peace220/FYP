@@ -1,4 +1,4 @@
-const db = require('../../config/db');
+const db = require('../config/db');
 
 const selectCourse = (req, res) => {
   const { course_name } = req.body;
