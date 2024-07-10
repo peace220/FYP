@@ -12,7 +12,6 @@ const UserQuestion = ({ questions }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(answers);
   };
 
   return (

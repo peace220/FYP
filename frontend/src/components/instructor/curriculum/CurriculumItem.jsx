@@ -4,26 +4,22 @@ import QuestionForm from "../questions/questionsforms";
 const CurriculumItem = ({ item, updateItem, deleteItem }) => {
   const [title, setTitle] = useState(item.title);
   const [isTitleConfirmed, setIsTitleConfirmed] = useState(!!item.title);
-  const [showDelete, setShowDelete] = useState(false);
+  const [showButton, setShowButton] = useState(false);
   const [video, setVideo] = useState(null);
+  const [isEditing, setIsEditing] = useState(true);
 
   const saveTitle = () => {
     updateItem(item.id, { ...item, title: title });
     setIsTitleConfirmed(true);
-  };
-
-  const cancelTitle = () => {
-    setTitle("");
-    updateItem(item.id, { ...item, title: "" });
-    setIsTitleConfirmed(false);
+    setIsEditing(false);
   };
 
   const handleMouseEnter = () => {
-    setShowDelete(true);
+    setShowButton(true);
   };
 
   const handleMouseLeave = () => {
-    setShowDelete(false);
+    setShowButton(false);
   };
 
   const handleVideoChange = (e) => {
@@ -46,16 +42,24 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
           {` ${item.title}`}
         </p>
 
-        {showDelete && (
-          <button
-            onClick={() => deleteItem(item.id)}
-            className="bg-red-500 text-white px-2 py-1 rounded"
-          >
-            Delete
-          </button>
+        {showButton && isEditing == false  && (
+          <div>
+            <button
+              onClick={() => setIsEditing(true)}
+              className="bg-green-500 text-white px-2 py-1 rounded mr-3"
+            >
+              Edit
+            </button>
+            <button
+              onClick={() => deleteItem(item.id)}
+              className="bg-red-500 text-white px-2 py-1 rounded"
+            >
+              Delete
+            </button>
+          </div>
         )}
       </div>
-      {!isTitleConfirmed ? (
+      {!isTitleConfirmed || isEditing ? (
         <>
           <input
             type="text"
@@ -65,12 +69,6 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
             className="w-full px-3 py-2 border rounded "
           />
           <div className="flex justify-end space-x-2">
-            <button
-              onClick={cancelTitle}
-              className="bg-red-500 text-white px-2 py-1 rounded"
-            >
-              Cancel
-            </button>
             <button
               onClick={saveTitle}
               className="bg-green-500 text-white px-2 py-1 rounded"

@@ -51,9 +51,6 @@ const Profile = () => {
       <Link to="/userquestions" className="text-lg font-bold mr-4">
         QuestionsForms
       </Link>
-      <Link to="/questionform" className="text-lg font-bold mr-4">
-        QuestionsForms
-      </Link>
       <Link to="/commentSection" className="text-lg font-bold mr-4">
         QuestionsForms
       </Link>

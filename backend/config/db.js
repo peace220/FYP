@@ -93,15 +93,27 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     const createQuestionsTableQuery = `
     CREATE TABLE IF NOT EXISTS Questions (
       id INT AUTO_INCREMENT PRIMARY KEY,
-      question_text TEXT NOT NULL,
+      section_id INT,
       type_id INT NOT NULL,
-      FOREIGN KEY (type_id) REFERENCES QuestionTypes(id) ON DELETE CASCADE
+      question_text TEXT NOT NULL,
+      FOREIGN KEY (type_id) REFERENCES QuestionTypes(id) ON DELETE CASCADE,
+      FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
     )`;
     db.query(createQuestionsTableQuery, (err, result) => {
       if (err) throw err;
     });
 
-    
+    const createOptionsTableQuery = `
+    CREATE TABLE IF NOT EXISTS Options (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      question_id INT NOT NULL,
+      option_text VARCHAR(255) NOT NULL,
+      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE
+    )`;
+    db.query(createOptionsTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
     const createAnswersTableQuery = `
     CREATE TABLE IF NOT EXISTS Answers (
       question_id INT NOT NULL,
@@ -113,7 +125,7 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     db.query(createAnswersTableQuery, (err, result) => {
       if (err) throw err;
     });
-    
+
     const createUsersAnswersTableQuery = `
     CREATE TABLE IF NOT EXISTS UsersAnswers (
       user_id INT NOT NULL,
@@ -122,23 +134,11 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       answer_text TEXT,
       FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
       FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
-      FOREIGN KEY (option_id) REFERENCES Options(id) ON DELETE CASCADE
+      FOREIGN KEY (selected_option_id) REFERENCES Options(id) ON DELETE CASCADE
     )`;
     db.query(createUsersAnswersTableQuery, (err, result) => {
       if (err) throw err;
     });
-
-    const createOptionsTableQuery = `
-    CREATE TABLE IF NOT EXISTS Options (
-      option_id INT AUTO_INCREMENT PRIMARY KEY,
-      question_id INT NOT NULL,
-      option_text VARCHAR(255) NOT NULL,
-      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE
-    )`;
-    db.query(createOptionsTableQuery, (err, result) => {
-      if (err) throw err;
-    });
-
   });
 });
 
