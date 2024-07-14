@@ -42,7 +42,7 @@ const Profile = () => {
       }
     };
     fetchUserProfile();
-  });
+  },[]);
 
   return (
     <div

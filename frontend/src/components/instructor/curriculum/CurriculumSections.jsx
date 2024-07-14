@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import CurriculumItem from "./CurriculumItem";
-
+import { updateSection as updateSectionApi} from "../../../API/courseApi";
 const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [items, setItems] = useState(section.items || []);
   const [title, setTitle] = useState(section.title);
-  const [isTitleConfirmed, setIsTitleConfirmed] = useState(!!section.title);
+  const [isSectionConfirmed, setIsSectionConfirmed] = useState(!!section.title);
   const [showButton, setShowButton] = useState(false);
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [description, setDescription] = useState("");
   const [lectureCount, setLectureCount] = useState(
     items.filter((item) => item.type === "lecture").length
   );
@@ -17,14 +18,12 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const addItem = (type) => {
     const newItem = {
       id: type === "lecture" ? lectureCount + 1 : quizCount + 1,
-      sectionId: section.id,
+      sectionId: section.section_id,
       type,
-      title: "",
+      title: ""
     };
     const updatedItems = [...items, newItem];
     setItems(updatedItems);
-    updateSection(section.id, { ...section, items: updatedItems });
-
     if (type === "lecture") {
       setLectureCount(lectureCount + 1);
     } else if (type === "quiz") {
@@ -37,7 +36,6 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
       item.type === updatedItem.type && item.id === itemId ? updatedItem : item
     );
     setItems(updatedItems);
-    updateSection(section.id, { ...section, items: updatedItems });
   };
 
   const deleteItem = (itemId, itemType) => {
@@ -45,7 +43,6 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
       (item) => item.id !== itemId || item.type !== itemType
     );
     setItems(updatedItems);
-    updateSection(section.id, { ...section, items: updatedItems });
 
     if (itemType === "lecture") {
       setLectureCount(lectureCount - 1);
@@ -54,9 +51,11 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
     }
   };
 
-  const saveTitle = () => {
-    updateSection(section.id, { ...section, title });
-    setIsTitleConfirmed(true);
+  const saveSection = () => {
+    const sectionData = { ...section, title, description };
+    updateSection(section.section_id, sectionData);
+    updateSectionApi(sectionData);
+    setIsSectionConfirmed(true);
     setIsEditing(false);
   };
 
@@ -76,7 +75,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
         onMouseLeave={handleMouseLeave}
       >
         <h2 className="font-bold text-lg mb-2">
-          Section {section.id}: {section.title}
+          Section {section.section_id}: {section.title}
         </h2>
         {showButton && isEditing == false && (
           <div>
@@ -87,7 +86,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
               Edit
             </button>
             <button
-              onClick={() => deleteSection(section.id)}
+              onClick={() => deleteSection(section.section_id)}
               className="bg-red-500 text-white px-2 py-1 rounded"
             >
               Delete
@@ -95,18 +94,25 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
           </div>
         )}
       </div>
-      {!isTitleConfirmed || isEditing ? (
+      {!isSectionConfirmed || isEditing ? (
         <>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter title"
-            className="w-full px-3 py-2 border rounded "
+            className="w-full px-3 py-2 border rounded mb-2"
+          />
+          <input
+            type="text"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description"
+            className="w-full px-3 py-2 border rounded mb-2"
           />
           <div className="flex justify-end space-x-2">
             <button
-              onClick={saveTitle}
+              onClick={saveSection}
               className="bg-green-500 text-white px-2 py-1 rounded"
             >
               Confirm
@@ -131,12 +137,6 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
           </button>
           <button
             onClick={() => addItem("quiz")}
-            className="bg-green-500 text-white px-2 py-1 rounded mt-2"
-          >
-            + Quiz
-          </button>
-          <button
-            onClick={(e) => console.log(section)}
             className="bg-green-500 text-white px-2 py-1 rounded mt-2"
           >
             + Quiz

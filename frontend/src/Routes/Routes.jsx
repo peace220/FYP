@@ -7,19 +7,7 @@ import QuestionForm from "../components/instructor/questions/questionsforms";
 import UserQuestion from "../components/instructor/questions/userQuestions";
 import CommentsSection from "../components/comments/commentSection";
 import InstructorMenu from "../components/instructor/instructorMenu";
-const sampleQuestions = [
-  {
-    id: 1,
-    text: 'What is the capital of France?',
-    type: 'multiple-choice',
-    choices: ['Paris', 'London', 'Berlin', 'Madrid'],
-  },
-  {
-    id: 2,
-    text: 'Explain the theory of relativity.',
-    type: 'essay',
-  },
-];
+import CurriculumCoursesPage from "../components/instructor/curriculum/CurriculumCoursePage";
 const LoggedinRoutes = [
   {
     path: "/",
@@ -47,7 +35,7 @@ const LoggedinRoutes = [
   },
   {
     path:"/userquestions",
-    element: <UserQuestion questions={sampleQuestions}/>,
+    element: <UserQuestion/>,
   },
   {
     path:"/commentSection",
@@ -56,6 +44,12 @@ const LoggedinRoutes = [
   {
     path:"/instructor",
     element: <InstructorMenu/>,
+    children:[
+      {
+        path:"course/courseid",
+        element:<CurriculumCoursesPage/>
+      }
+    ]
   }
 ];
 export default LoggedinRoutes;

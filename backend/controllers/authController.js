@@ -1,5 +1,5 @@
 const db = require("../config/db");
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const { findUserByEmail } = require("../utils/userUtils");
 
 const signup = (req, res) => {
@@ -38,34 +38,22 @@ const login = (req, res) => {
     }
 
     const token = jwt.sign({ id: user.id }, "secret", { expiresIn: 86400 }); // 24 hours
-    res.status(200).send({ auth: true, token});
-  });
-};
-
-const checkTable = (req, res) => {
-  const sql = `SHOW TABLES LIKE 'users'`;
-  db.query(sql, (err, result) => {
-    if (err) throw err;
-    if (result.length > 0) {
-      res.send("Table exists");
-    } else {
-      res.send("Table does not exist");
-    }
+    res.status(200).send({ auth: true, token });
   });
 };
 
 const getUserProfile = (req, res) => {
   const userId = req.userId;
-  const sql = 'SELECT username FROM users WHERE id = ?';
+  const sql = "SELECT username FROM users WHERE id = ?";
   db.query(sql, [userId], (err, results) => {
     if (err) {
-      return res.status(500).send('Error retrieving user profile');
+      return res.status(500).send("Error retrieving user profile");
     }
     if (results.length === 0) {
-      return res.status(404).send('User not found');
+      return res.status(404).send("User not found");
     }
     res.status(200).json(results[0]);
   });
 };
 
-module.exports = { signup, login, checkTable, getUserProfile };
+module.exports = { signup, login, getUserProfile };

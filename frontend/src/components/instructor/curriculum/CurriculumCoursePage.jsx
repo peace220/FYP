@@ -1,39 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CurriculumCourse from "./CurriculumCourse";
-import axios from "axios";
+import {
+  fetchCourses,
+  createCourse,
+  deleteCourse as deleteCourseApi,
+} from "../../../API/courseApi";
 
 const CurriculumCoursesPage = () => {
   const [courses, setCourses] = useState([]);
+  const getCourses = async () => {
+    const coursesData = await fetchCourses();
+    setCourses(coursesData);
+  };
+  useEffect(() => {
+    getCourses();
+  }, []);
 
-  const addCourse = () => {
-    const newCourse = {
-      id: courses.length + 1,
-      title: "",
-    };
-    setCourses([...courses, newCourse]);
+  const addCourse = async () => {
+    if (courses.length == 0) {
+      const newCourse = {
+        id: 1,
+        course_name: "",
+        description: "",
+      };
+      await createCourse(newCourse);
+      getCourses();
+    } else {
+      const newCourse = {
+        id: courses[courses.length - 1].id + 1,
+        course_name: "",
+        description: "",
+      };
+      await createCourse(newCourse);
+      setCourses([...courses, newCourse]);
+    }
   };
 
-  const updateCourse = (courseId, updateCourses) => {
-    const updatedSections = courses.map((course) =>
-      course.id === courseId ? updateCourses : course
+  const updateCourse = (courseId, updatedCourse) => {
+    const updatedCourses = courses.map((course) =>
+      course.id === courseId ? updatedCourse : course
     );
-    setCourses(updatedSections);
-  };
-
-  const deleteCourse = (courseId) => {
-    const updatedCourses = courses.filter((course) => course.id !== courseId);
     setCourses(updatedCourses);
   };
 
-  const insertCourse = async () => {
-    const response = await axios.post("http://localhost:5000/api/curriculum",{
-      
-    })
+  const deleteCourse = async (courseId) => {
+    await deleteCourseApi(courseId);
+    getCourses();
   };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Curriculum</h1>
-      {/* <button onClick={consolelogg}>asdasdad</button> */}
       {courses.map((course) => (
         <CurriculumCourse
           key={course.id}

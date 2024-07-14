@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import CurriculumCoursePage from "./curriculum/CurriculumCoursePage";
 const instructorMenu = () => {

@@ -6,7 +6,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
   const [isTitleConfirmed, setIsTitleConfirmed] = useState(!!item.title);
   const [showButton, setShowButton] = useState(false);
   const [video, setVideo] = useState(null);
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
 
   const saveTitle = () => {
     updateItem(item.id, { ...item, title: title });
@@ -42,7 +42,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
           {` ${item.title}`}
         </p>
 
-        {showButton && isEditing == false  && (
+        {showButton && isEditing === false  && (
           <div>
             <button
               onClick={() => setIsEditing(true)}

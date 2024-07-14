@@ -23,6 +23,7 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
         username VARCHAR(255),
         email VARCHAR(255) UNIQUE,
         password VARCHAR(255),
+        status varchar(50),
         PRIMARY KEY(id)
       )`;
     db.query(createUsersTableQuery, (err, result) => {
@@ -34,6 +35,8 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
         id int AUTO_INCREMENT,
         user_id int,
         course_name VARCHAR(255),
+        description TEXT,
+        status varchar(50),
         PRIMARY KEY(id),
         FOREIGN KEY(user_id) REFERENCES users(id)
       )`;
@@ -58,12 +61,14 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     });
 
     const createSectionsTableQuery = `
-      CREATE TABLE IF NOT EXISTS sections (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        course_id INT,
-        title VARCHAR(255) NOT NULL,
-        description TEXT,
-        FOREIGN KEY(course_id) REFERENCES courses(id)
+    CREATE TABLE IF NOT EXISTS sections (
+      course_id INT NOT NULL,
+      section_id INT Not NULL,
+      title VARCHAR(255) NOT NULL,
+      description TEXT,
+      status varchar(50),
+      PRIMARY KEY (course_id, section_id),
+      FOREIGN KEY (course_id) REFERENCES courses(id)
       )`;
     db.query(createSectionsTableQuery, (err, result) => {
       if (err) throw err;
@@ -71,11 +76,14 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
 
     const createLecturesTableQuery = `
     CREATE TABLE IF NOT EXISTS lectures (
-      id INT AUTO_INCREMENT PRIMARY KEY,
+      lecture_id INT,
+      course_id INT,
       section_id INT,
       title VARCHAR(255) NOT NULL,
       description TEXT,
-      FOREIGN KEY(section_id) REFERENCES sections(id)
+      status VARCHAR(50),
+      PRIMARY KEY (lecture_id, course_id, section_id),
+      FOREIGN KEY(course_id, section_id) REFERENCES sections(course_id, section_id)
     )`;
     db.query(createLecturesTableQuery, (err, result) => {
       if (err) throw err;
@@ -92,12 +100,15 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
 
     const createQuestionsTableQuery = `
     CREATE TABLE IF NOT EXISTS Questions (
-      id INT AUTO_INCREMENT PRIMARY KEY,
+      question_id Int,
+      course_id INT,
       section_id INT,
       type_id INT NOT NULL,
       question_text TEXT NOT NULL,
+      status varchar(50),
+      PRIMARY KEY (question_id, course_id, section_id),
       FOREIGN KEY (type_id) REFERENCES QuestionTypes(id) ON DELETE CASCADE,
-      FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
+      FOREIGN KEY(course_id, section_id) REFERENCES sections(course_id, section_id)
     )`;
     db.query(createQuestionsTableQuery, (err, result) => {
       if (err) throw err;
@@ -108,7 +119,8 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       id INT AUTO_INCREMENT PRIMARY KEY,
       question_id INT NOT NULL,
       option_text VARCHAR(255) NOT NULL,
-      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE
+      status varchar(50),
+      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE
     )`;
     db.query(createOptionsTableQuery, (err, result) => {
       if (err) throw err;
@@ -119,6 +131,7 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       question_id INT NOT NULL,
       option_id INT,
       answer_text TEXT,
+      status varchar(50),
       FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
       FOREIGN KEY (option_id) REFERENCES Options(id) ON DELETE CASCADE
     )`;
@@ -132,6 +145,7 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       question_id INT NOT NULL,
       selected_option_id INT,
       answer_text TEXT,
+      status varchar(50),
       FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
       FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
       FOREIGN KEY (selected_option_id) REFERENCES Options(id) ON DELETE CASCADE
