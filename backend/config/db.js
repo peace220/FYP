@@ -115,25 +115,30 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     });
 
     const createOptionsTableQuery = `
-    CREATE TABLE IF NOT EXISTS Options (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      question_id INT NOT NULL,
-      option_text VARCHAR(255) NOT NULL,
-      status varchar(50),
-      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE
-    )`;
+CREATE TABLE IF NOT EXISTS Options (
+  options_id INT AUTO_INCREMENT primary key,
+  question_id INT,
+  course_id INT,
+  section_id INT,
+  option_text VARCHAR(255) NOT NULL,
+  status VARCHAR(50),
+  FOREIGN KEY (question_id, course_id, section_id) REFERENCES Questions(question_id, course_id, section_id) ON DELETE CASCADE
+)`;
     db.query(createOptionsTableQuery, (err, result) => {
       if (err) throw err;
     });
 
     const createAnswersTableQuery = `
     CREATE TABLE IF NOT EXISTS Answers (
-      question_id INT NOT NULL,
+      answer_id Int AUTO_INCREMENT primary key,
       option_id INT,
+      question_id INT,
+      course_id INT,
+      section_id INT,
       answer_text TEXT,
       status varchar(50),
-      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
-      FOREIGN KEY (option_id) REFERENCES Options(id) ON DELETE CASCADE
+      FOREIGN KEY (question_id, course_id, section_id) REFERENCES Questions(question_id, course_id, section_id) ON DELETE CASCADE,
+      FOREIGN KEY (option_id) REFERENCES Options(options_id) ON DELETE CASCADE
     )`;
     db.query(createAnswersTableQuery, (err, result) => {
       if (err) throw err;
@@ -141,14 +146,17 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
 
     const createUsersAnswersTableQuery = `
     CREATE TABLE IF NOT EXISTS UsersAnswers (
+      userAnswer_id Int AUTO_INCREMENT primary key,
       user_id INT NOT NULL,
-      question_id INT NOT NULL,
+      question_id INT,
+      course_id INT,
+      section_id INT,
       selected_option_id INT,
       answer_text TEXT,
       status varchar(50),
       FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-      FOREIGN KEY (question_id) REFERENCES Questions(id) ON DELETE CASCADE,
-      FOREIGN KEY (selected_option_id) REFERENCES Options(id) ON DELETE CASCADE
+      FOREIGN KEY (question_id, course_id, section_id) REFERENCES Questions(question_id, course_id, section_id) ON DELETE CASCADE,
+      FOREIGN KEY (selected_option_id) REFERENCES Options(options_id) ON DELETE CASCADE
     )`;
     db.query(createUsersAnswersTableQuery, (err, result) => {
       if (err) throw err;
