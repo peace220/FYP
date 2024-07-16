@@ -7,7 +7,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [isSectionConfirmed, setIsSectionConfirmed] = useState(!!section.title);
   const [showButton, setShowButton] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(section.description);
   const [lectureCount, setLectureCount] = useState(
     items.filter((item) => item.type === "lecture").length
   );

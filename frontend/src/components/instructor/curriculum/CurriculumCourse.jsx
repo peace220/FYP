@@ -30,7 +30,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     } else {
       const newSection = {
         section_id: sections[sections.length - 1].section_id + 1,
-        courseId: course.id,
+        courseId: course.id,//06500080098
         title: "",
         description: "",
       };
@@ -39,9 +39,9 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     }
   };
 
-  const updateSection = (id, updatedSection) => {
+  const updateSection = (section_id, updatedSection) => {
     const updatedSections = sections.map((section) =>
-      section.id === id ? updatedSection : section
+      section.section_id === section_id ? updatedSection : section
     );
     setSections(updatedSections);
   };
@@ -86,7 +86,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
         <h2 className="text-xl font-bold">
           Course: {` ${course.course_name}`}
         </h2>
-        {showButton && isEditing == false && (
+        {showButton && isEditing  && (
           <div>
             <button
               onClick={() => setIsEditing(true)}
