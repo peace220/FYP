@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import CurriculumSection from "./CurriculumSections";
-import { updateCourses as updateCourseApi, fetchSections, createSection} from "../../../API/courseApi";
+import {
+  updateCourses as updateCourseApi,
+  fetchSections,
+  createSection,
+} from "../../../API/courseApi";
 
 const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
   const [sections, setSections] = useState(course.sections || []);
   const [showButton, setShowButton] = useState(false);
   const [course_name, setCourse_name] = useState(course.course_name);
   const [isCourseConfirmed, setIsCourseConfirmed] = useState(
-    !!course.course_name || !!course.description
+    !!course.course_name
   );
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(course.description);
@@ -21,7 +25,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     if (sections.length == 0) {
       const newSection = {
         section_id: 1,
-        courseId: course.id,
+        course_id: course.id,
         title: "",
         description: "",
       };
@@ -30,7 +34,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     } else {
       const newSection = {
         section_id: sections[sections.length - 1].section_id + 1,
-        courseId: course.id,//06500080098
+        course_id: course.id,
         title: "",
         description: "",
       };
@@ -86,7 +90,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
         <h2 className="text-xl font-bold">
           Course: {` ${course.course_name}`}
         </h2>
-        {showButton && isEditing  && (
+        {showButton && isEditing == false && (
           <div>
             <button
               onClick={() => setIsEditing(true)}

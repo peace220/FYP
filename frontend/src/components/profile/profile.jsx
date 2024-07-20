@@ -2,13 +2,15 @@ import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe } from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+
 const Profile = () => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [username, setUsername] = useState("");
   const [showLanguageSettingsModal, setShowLanguageSettingsModal] =
     useState(false);
+  const navigate = useNavigate();
 
   const handleMouseEnter = () => {
     setDropdownVisible(true);
@@ -20,6 +22,7 @@ const Profile = () => {
 
   const handleLogOutButton = () => {
     localStorage.removeItem("token");
+    navigate("/join/login");
   };
 
   useEffect(() => {
@@ -42,23 +45,21 @@ const Profile = () => {
       }
     };
     fetchUserProfile();
-  },[]);
+  }, []);
 
   return (
-    <div
-      className="flex items-center relative"
-    >
+    <div className="flex items-center relative">
       <Link to="/userquestions" className="text-lg font-bold mr-4">
         QuestionsForms
       </Link>
       <Link to="/commentSection" className="text-lg font-bold mr-4">
         QuestionsForms
       </Link>
-      <Link to="/instructor" className="text-lg font-bold mr-4">
-        instructor
-      </Link>
       {username ? (
         <>
+          <Link to="/instructor" className="text-lg font-bold mr-4">
+            Instructor
+          </Link>
           <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <div className="flex justify-end items-center h-12">
               <span className="text-lg font-bold mr-10">{username}</span>

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 const Comment = ({ comment }) => {
+  const { courseId } = useParams();
   const [replies, setReplies] = useState(comment.replies || []);
   const [replyText, setReplyText] = useState("");
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -12,6 +14,7 @@ const Comment = ({ comment }) => {
         {
           text: replyText,
           parent_id: comment.id,
+          course_id: courseId,
         },
         {
           headers: { "x-access-token": localStorage.getItem("token") },

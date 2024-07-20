@@ -50,7 +50,7 @@ const QuestionForm = () => {
       questionText,
       questionType,
       choices: questionType === "multiple-choice" ? choices : null,
-      correctAnswer: questionType === "multiple-choice" ? correctAnswer : null,
+      correctAnswer: questionType === "multiple-choice" ? correctAnswer + 1 : null,
       essayAnswer: questionType === "essay" ? essayAnswer : null,
     });
   };

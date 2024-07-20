@@ -20,7 +20,7 @@ const Sidebar = () => {
         </li>
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faCompass} className="text-xl" />
-          <Link to="/discover" className="hover:text-gray-400">
+          <Link to="/Courses" className="hover:text-gray-400">
           Discover
           </Link>
         </li>

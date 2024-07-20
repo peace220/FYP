@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CurriculumItem from "./CurriculumItem";
-import { updateSection as updateSectionApi} from "../../../API/courseApi";
+import {
+  createQuiz,
+  createLecture,
+  fetchItems,
+  updateSection as updateSectionApi,
+} from "../../../API/courseApi";
 const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [items, setItems] = useState(section.items || []);
   const [title, setTitle] = useState(section.title);
@@ -15,19 +20,63 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
     items.filter((item) => item.type === "quiz").length
   );
 
-  const addItem = (type) => {
-    const newItem = {
-      id: type === "lecture" ? lectureCount + 1 : quizCount + 1,
-      sectionId: section.section_id,
-      type,
-      title: ""
-    };
-    const updatedItems = [...items, newItem];
-    setItems(updatedItems);
-    if (type === "lecture") {
-      setLectureCount(lectureCount + 1);
-    } else if (type === "quiz") {
-      setQuizCount(quizCount + 1);
+  const getSections = async () => {
+    const ItemsData = await fetchItems(
+      section.course_id,
+      section.section_id
+    );
+    setItems(ItemsData);
+    if(ItemsData.length != 0){
+      setLectureCount(ItemsData.filter((item) => item.type === "lecture").length);
+      setQuizCount(ItemsData.filter((item) => item.type === "quiz").length)
+    }
+  };
+
+  const addItem = async (type) => {
+    if (items.length == 0) {
+      const newItem = {
+        id: type === "lecture" ? lectureCount + 1 : quizCount + 1,
+        section_id: section.section_id,
+        course_id: section.course_id,
+        type,
+        title: "",
+        description: "",
+      };
+      const updatedItems = [...items, newItem];
+      setItems(updatedItems);
+      if (type === "lecture") {
+        setLectureCount(lectureCount + 1);
+      } else if (type === "quiz") {
+        setQuizCount(quizCount + 1);
+      }
+
+      if (type == "lecture") {
+        await createLecture(newItem);
+      } else if (type == "quiz") {
+        await createQuiz(newItem);
+      }
+    } else {
+      const newItem = {
+        id: type === "lecture" ? lectureCount + 1 : quizCount + 1,
+        section_id: section.section_id,
+        course_id: section.course_id,
+        type,
+        title: "",
+        description: "",
+      };
+      const updatedItems = [...items, newItem];
+      setItems(updatedItems);
+      if (type === "lecture") {
+        setLectureCount(lectureCount + 1);
+      } else if (type === "quiz") {
+        setQuizCount(quizCount + 1);
+      }
+
+      if (type == "lecture") {
+        await createLecture(newItem);
+      } else if (type == "quiz") {
+        await createQuiz(newItem);
+      }
     }
   };
 
@@ -66,6 +115,10 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const handleMouseLeave = () => {
     setShowButton(false);
   };
+
+  useEffect(() => {
+    getSections();
+  }, []);
 
   return (
     <div className="border border-black p-4 mb-4 bg-gray-100">

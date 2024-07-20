@@ -4,6 +4,6 @@ const verifyToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/postComments',verifyToken, postComments);
-router.get('/comments', getComments);
+router.get('/comments/:courseId', getComments);
 
 module.exports = router;

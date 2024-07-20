@@ -1,4 +1,23 @@
 const db = require("../config/db");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
+
+const uploadsDir = path.join(__dirname, "../uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
 
 const insertCourse = (req, res) => {
   const userId = req.userId;
@@ -17,6 +36,14 @@ const getCourses = (req, res) => {
   const userId = req.userId;
   const sql = "SELECT * FROM Courses WHERE status = 'active' && user_id = ?";
   db.query(sql, [userId], (err, results) => {
+    if (err) throw err;
+    res.send(results);
+  });
+};
+
+const getPublicCourses = (req, res) => {
+  const sql = "SELECT * FROM Courses WHERE status = 'active'";
+  db.query(sql, (err, results) => {
     if (err) throw err;
     res.send(results);
   });
@@ -46,10 +73,35 @@ const deleteCourses = (req, res) => {
   });
 };
 
+const getSelectedCourseDetails = (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+    const sql = `
+    SELECT 
+      c.*, 
+      u.username AS creator_username 
+    FROM Courses c
+    JOIN Users u ON c.user_id = u.id
+    WHERE c.status = 'active' && c.id = ?
+  `;
+    db.query(sql, [courseId], (err, results) => {
+      if (err) {
+        return res.status(500).send("Error fetching course details");
+      }
+      if (results.length === 0) {
+        return res.status(404).send("Course not found");
+      }
+      res.status(200).json(results[0]);
+    });
+  } catch (error) {
+    console.error("Error fetching course details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const insertSection = (req, res) => {
   const { course_id, section_id, title, description } = req.body;
   const sql =
-    "INSERT INTO Sections (course_id, section_id, title, description, status) VALUES (?, ?, ?, ?, 'active')";
+    "INSERT INTO Sections (course_id, section_id, title, description, status) VALUES ( ?, ?, ?, ?, 'active')";
   db.query(sql, [course_id, section_id, title, description], (err, result) => {
     if (err) throw err;
     res.send(result);
@@ -76,39 +128,70 @@ const deleteSection = (req, res) => {
 };
 
 const selectSection = (req, res) => {
-  const { courseId } = req.query;
+  const { course_id } = req.query;
   const sql = "SELECT * FROM Sections WHERE course_id = ? && status = 'active'";
-  db.query(sql, [courseId], (err, results) => {
+  db.query(sql, [course_id], (err, results) => {
     if (err) throw err;
     res.send(results);
   });
 };
 
 const insertLecture = (req, res) => {
-  const { section_id, lecture_title, content } = req.body;
+  const { lecture_id, section_id, lecture_title, course_id, description } =
+    req.body;
   const sql =
-    "INSERT INTO Lectures (section_id, lecture_title, content) VALUES (?, ?, ?)";
-  db.query(sql, [section_id, lecture_title, content], (err, result) => {
-    if (err) throw err;
-    res.send(result);
-  });
+    "INSERT INTO Lectures (lecture_id, course_id, section_id, title, description, status) VALUES (?, ?, ?, ?, ?, 'active')";
+  db.query(
+    sql,
+    [lecture_id, course_id, section_id, lecture_title, description],
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
 };
 
-const selectLecture = (req, res) => {
-  const { section_id } = req.query;
-  const sql = "SELECT * FROM Lectures WHERE section_id = ?";
-  db.query(sql, [section_id], (err, results) => {
-    if (err) throw err;
-    res.send(results);
-  });
+const selectItems = (req, res) => {
+  const { section_id, course_id } = req.query;
+
+  const sql = `
+  SELECT 
+    lecture_id AS id,
+    section_id,
+    course_id,
+    title,
+    description,
+    'lecture' AS type
+  FROM Lectures
+  WHERE section_id = ? AND course_id = ?
+  UNION ALL
+  SELECT 
+    Quiz_id AS id,
+    section_id,
+    course_id,
+    title,
+    description,
+    'quiz' AS type
+  FROM Quiz
+  WHERE section_id = ? AND course_id = ?
+`;
+
+  db.query(
+    sql,
+    [section_id, course_id, section_id, course_id],
+    (err, results) => {
+      if (err) throw err;
+
+      res.send(results);
+    }
+  );
 };
 
 const updateLecture = (req, res) => {
-  const { id } = req.params;
-  const { lecture_title, content } = req.body;
+  const { lecture_id, course_id, section_id, title, description } = req.body;
   const sql =
-    "UPDATE Lectures SET lecture_title = ?, content = ? WHERE lecture_id = ?";
-  db.query(sql, [lecture_title, content, id], (err, result) => {
+    "UPDATE Lectures SET title = ?, description = ? WHERE lecture_id = ? && course_id = ? && section_id = ?";
+  db.query(sql, [title, description, lecture_id, course_id, section_id], (err, result) => {
     if (err) throw err;
     res.send(result);
   });
@@ -123,14 +206,62 @@ const deleteLecture = (req, res) => {
   });
 };
 
-// app.post('/api/questions', (req, res) => {
-//   const { section_id, question_text, question_type_id } = req.body;
-//   const sql = 'INSERT INTO Questions (section_id, question_text, question_type_id) VALUES (?, ?, ?)';
-//   db.query(sql, [section_id, question_text, question_type_id], (err, result) => {
-//     if (err) throw err;
-//     res.send(result);
-//   });
-// });
+const uploadVideo = (req, res) => {
+  const { lecture_id, section_id, course_id } = req.body;
+  const videoPath = req.file.path;
+  const videoName = req.file.filename;
+
+  const sql =
+    "INSERT INTO videos (course_id, section_id, lecture_id, name, path) VALUES (?, ?, ?, ?, ?)";
+  db.query(
+    sql,
+    [course_id, section_id, lecture_id, videoName, videoPath],
+    (err, result) => {
+      if (err) throw err;
+      res.json({
+        message: "Video uploaded successfully",
+        videoId: result.insertId,
+      });
+    }
+  );
+};
+
+const insertQuiz = (req, res) => {
+  const { quiz_id, course_id, section_id, title, description } = req.body;
+  const sql =
+    "INSERT INTO quiz (Quiz_id, course_id, section_id, title, description, status) VALUES (?, ?, ?, ?, ?, 'active')";
+  db.query(
+    sql,
+    [quiz_id, course_id, section_id, title, description],
+    (err, result) => {
+      if (err) throw err;
+      res.send(result);
+    }
+  );
+};
+
+const getVideos = (req, res) => {
+  const { course_id, section_id, lecture_id } = req.query;
+  const sql =
+    "SELECT * FROM videos WHERE course_id = ? && section_id = ? && lecture_id = ?";
+  db.query(sql, [course_id, section_id, lecture_id], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+  });
+};
+
+const enrollCourse = (req, res) => {
+  const userId = req.userId;
+  const { courseId } = req.body;
+
+  const sql = "INSERT INTO EnrolledCourses (user_id, course_id, status) VALUES (?, ?, 'active')";
+  db.query(sql, [userId, courseId], (err, result) => {
+    if (err) {
+      return res.status(500).send("Error enrolling in course");
+    }
+    res.send("Course enrolled successfully");
+  });
+};
 
 // app.get('/api/questions', (req, res) => {
 //   const { section_id } = req.query;
@@ -189,16 +320,23 @@ const deleteLecture = (req, res) => {
 // });
 
 module.exports = {
+  upload,
+  uploadVideo,
+  getVideos,
   insertCourse,
+  getPublicCourses,
+  getSelectedCourseDetails,
   updateCourses,
   deleteCourses,
   getCourses,
   insertLecture,
   updateLecture,
   deleteLecture,
-  selectLecture,
+  selectItems,
   insertSection,
   updateSection,
   deleteSection,
   selectSection,
+  insertQuiz,
+  enrollCourse,
 };

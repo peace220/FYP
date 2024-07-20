@@ -98,17 +98,33 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       if (err) throw err;
     });
 
-    const createQuestionsTableQuery = `
-    CREATE TABLE IF NOT EXISTS Questions (
-      question_id Int,
+    const createQuizQuery = `
+    CREATE TABLE IF NOT EXISTS Quiz (
+      Quiz_id Int,
       course_id INT,
       section_id INT,
-      type_id INT NOT NULL,
+      title VARCHAR(255),
+      description TEXT,
+      status varchar(50),
+      PRIMARY KEY (Quiz_id, course_id, section_id),
+      FOREIGN KEY(course_id, section_id) REFERENCES sections(course_id, section_id) ON DELETE CASCADE
+    )`;
+    db.query(createQuizQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+
+    const createQuestionsTableQuery = `
+    CREATE TABLE IF NOT EXISTS Questions (
+      question_id Int Auto_increment Primary Key,
+      Quiz_id INT,
+      course_id INT,
+      section_id INT,
+      type_id INT,
       question_text TEXT NOT NULL,
       status varchar(50),
-      PRIMARY KEY (question_id, course_id, section_id),
       FOREIGN KEY (type_id) REFERENCES QuestionTypes(id) ON DELETE CASCADE,
-      FOREIGN KEY(course_id, section_id) REFERENCES sections(course_id, section_id)
+      FOREIGN KEY(Quiz_id, course_id, section_id) REFERENCES Quiz(Quiz_id, course_id, section_id) ON DELETE CASCADE
     )`;
     db.query(createQuestionsTableQuery, (err, result) => {
       if (err) throw err;
@@ -118,11 +134,9 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
 CREATE TABLE IF NOT EXISTS Options (
   options_id INT AUTO_INCREMENT primary key,
   question_id INT,
-  course_id INT,
-  section_id INT,
   option_text VARCHAR(255) NOT NULL,
   status VARCHAR(50),
-  FOREIGN KEY (question_id, course_id, section_id) REFERENCES Questions(question_id, course_id, section_id) ON DELETE CASCADE
+  FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE
 )`;
     db.query(createOptionsTableQuery, (err, result) => {
       if (err) throw err;
@@ -133,11 +147,9 @@ CREATE TABLE IF NOT EXISTS Options (
       answer_id Int AUTO_INCREMENT primary key,
       option_id INT,
       question_id INT,
-      course_id INT,
-      section_id INT,
       answer_text TEXT,
       status varchar(50),
-      FOREIGN KEY (question_id, course_id, section_id) REFERENCES Questions(question_id, course_id, section_id) ON DELETE CASCADE,
+      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE,
       FOREIGN KEY (option_id) REFERENCES Options(options_id) ON DELETE CASCADE
     )`;
     db.query(createAnswersTableQuery, (err, result) => {
@@ -149,16 +161,52 @@ CREATE TABLE IF NOT EXISTS Options (
       userAnswer_id Int AUTO_INCREMENT primary key,
       user_id INT NOT NULL,
       question_id INT,
-      course_id INT,
-      section_id INT,
       selected_option_id INT,
       answer_text TEXT,
       status varchar(50),
       FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-      FOREIGN KEY (question_id, course_id, section_id) REFERENCES Questions(question_id, course_id, section_id) ON DELETE CASCADE,
+      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE,
       FOREIGN KEY (selected_option_id) REFERENCES Options(options_id) ON DELETE CASCADE
     )`;
     db.query(createUsersAnswersTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createVideosTableQuery = `
+    CREATE TABLE IF NOT EXISTS Videos (
+      video_id INT AUTO_INCREMENT PRIMARY KEY,
+      course_id INT,
+      section_id INT,
+      lecture_id INT,
+      name varchar(255) NOT NULL,
+      path varchar(255) NOT NULL,
+      FOREIGN KEY (lecture_id, course_id, section_id) REFERENCES lectures(lecture_id, course_id, section_id) ON DELETE CASCADE
+    )`;
+    db.query(createVideosTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createTranscriptTableQuery = `
+    CREATE TABLE IF NOT EXISTS Transcript (
+      transcript_id Int AUTO_INCREMENT primary key,
+      video_id INT,
+      transcript TEXT,
+      FOREIGN KEY (video_id) REFERENCES Videos(video_id) ON DELETE CASCADE
+    )`;
+    db.query(createTranscriptTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createEnrolledCoursesTableQuery = `
+    CREATE TABLE IF NOT EXISTS EnrolledCourses (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT,
+      course_id INT,
+      status VARCHAR(50),
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY (course_id) REFERENCES courses(id) ON DELETE CASCADE
+    )`;
+    db.query(createEnrolledCoursesTableQuery, (err, result) => {
       if (err) throw err;
     });
   });

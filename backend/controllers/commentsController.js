@@ -1,12 +1,14 @@
 const db = require("../config/db");
 
 const getComments = (req, res) => {
+  const courseId = req.params.courseId;
   const sql = `
   SELECT comments.*, users.username 
   FROM comments 
   JOIN users ON comments.user_id = users.id
+  Where comments.course_id = ?
 `;
-  db.query(sql, (err, results) => {
+  db.query(sql, [courseId],(err, results) => {
     if (err) throw err;
 
     const comments = {};
@@ -27,13 +29,13 @@ const getComments = (req, res) => {
 
 const postComments = (req, res) => {
   const userId = req.userId;
-  const { text, parent_id } = req.body;
+  const { text, parent_id, course_id } = req.body; 
+  console.log(course_id);
   const sql =
-    "INSERT INTO comments (user_Id, text, parent_id) VALUES (?, ?, ?)";
-  db.query(sql, [userId, text, parent_id], (err, result) => {
+    "INSERT INTO comments (user_Id, text, parent_id, course_id) VALUES (?, ?, ?, ?)"; 
+  db.query(sql, [userId, text, parent_id, course_id], (err, result) => {
     if (err) throw err;
-    res.json({ id: result.insertId, userId, text, parent_id });
+    res.json({ id: result.insertId, userId, text, parent_id, course_id }); 
   });
 };
-
 module.exports = { getComments, postComments };
