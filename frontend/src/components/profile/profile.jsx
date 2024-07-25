@@ -25,6 +25,10 @@ const Profile = () => {
     navigate("/join/login");
   };
 
+  const handleUserSetting = () => {
+    navigate("/userSettings");
+  };
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
@@ -49,12 +53,6 @@ const Profile = () => {
 
   return (
     <div className="flex items-center relative">
-      <Link to="/userquestions" className="text-lg font-bold mr-4">
-        QuestionsForms
-      </Link>
-      <Link to="/commentSection" className="text-lg font-bold mr-4">
-        QuestionsForms
-      </Link>
       {username ? (
         <>
           <Link to="/instructor" className="text-lg font-bold mr-4">
@@ -67,7 +65,10 @@ const Profile = () => {
 
             {dropdownVisible && (
               <div className="absolute top-12 right-9 bg-white border border-gray-200 shadow-lg py-2 w-40">
-                <button className="block w-full text-left px-4 py-2 hover:bg-gray-100">
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  onClick={handleUserSetting}
+                >
                   Edit Profile
                 </button>
                 <button
