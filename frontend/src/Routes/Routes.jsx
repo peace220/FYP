@@ -1,7 +1,6 @@
 import Login from "../pages/Login/Login";
 import Signup from "../pages/Signup/Signup";
 import Home from "../pages/Home";
-import Collaboration from "../pages/Collaboration";
 import Courses from "../pages/Course/Courses";
 import QuestionForm from "../components/instructor/questions/questionsforms";
 import UserQuestion from "../components/instructor/questions/userQuestions";
@@ -17,10 +16,6 @@ const LoggedinRoutes = [
   {
     path: "/",
     element: <Home />,
-  },
-  {
-    path: "/collaboration",
-    element: <Collaboration />,
   },
   {
     path: "/join/login",

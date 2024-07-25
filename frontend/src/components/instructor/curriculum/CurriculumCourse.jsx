@@ -9,6 +9,7 @@ import {
 import ThemedButton from "../../Theme/ThemeButton";
 
 const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
+
   const [sections, setSections] = useState(course.sections || []);
   const [showButton, setShowButton] = useState(false);
   const [course_name, setCourse_name] = useState(course.course_name);
@@ -87,13 +88,13 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
   }, []);
 
   return (
-    <div className="border border-gray-500 p-4 mb-6">
+    <div className="border border-gray-500 p-4 mb-6 bg-white space-y-2">
       <div
         className="flex justify-between items-center mb-4"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <h2 className="text-xl font-bold">
+        <h2 className={`text-xl font-bold`}>
           Course: {` ${course.course_name}`}
         </h2>
         {showButton && isEditing == false && (
@@ -101,12 +102,14 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
             <ThemedButton
               type="edit"
               onClick={() => setIsEditing(true)}
+              className="bg-green-500 text-white px-2 py-1 rounded mr-3"
             >
               Edit
             </ThemedButton>
             <ThemedButton
               type="delete"
               onClick={() => deleteCourse(course.id)}
+              className="bg-red-500 text-white px-2 py-1 rounded"
             >
               Delete
             </ThemedButton>
@@ -133,12 +136,14 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
             <ThemedButton
               type="delete"
               onClick={cancelEdit}
+              className="bg-red-500 text-white px-2 py-1 rounded"
             >
               Cancel
             </ThemedButton>
             <ThemedButton
               type="store"
               onClick={saveCourse}
+              className="bg-green-500 text-white px-2 py-1 rounded"
             >
               Confirm
             </ThemedButton>
@@ -157,6 +162,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
           <ThemedButton
             type="store"
             onClick={addSection}
+            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
           >
             + Section
           </ThemedButton>
@@ -165,6 +171,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
       <ThemedButton
         type="store"
         onClick={publishCourse}
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
       >
         publish
       </ThemedButton>

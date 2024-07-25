@@ -5,7 +5,10 @@ import {
   createCourse,
   deleteCourse as deleteCourseApi,
 } from "../../../API/curriculumApi";
+import { useThemedStyles } from "../../../hooks/ThemeContrast";
+import ThemedButton from "../../Theme/ThemeButton";
 const CurriculumCoursesPage = () => {
+  const { textColor } = useThemedStyles();
   const [courses, setCourses] = useState([]);
   const getCourses = async () => {
     const coursesData = await fetchCourses();
@@ -44,23 +47,23 @@ const CurriculumCoursesPage = () => {
     getCourses();
   };
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Curriculum</h1>
-      {courses.map((course) => (
-        <CurriculumCourse
-          key={course.id}
-          course={course}
-          updateCourse={updateCourse}
-          deleteCourse={deleteCourse}
-        />
-      ))}
-      <button
-        onClick={addCourse}
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-      >
-        + Course
-      </button>
-    </div>
+      <div className="container mx-auto p-4 ">
+        <h1 className={`text-2xl font-bold mb-4 ${textColor}`}>Curriculum</h1>
+        {courses.map((course) => (
+          <CurriculumCourse
+            key={course.id}
+            course={course}
+            updateCourse={updateCourse}
+            deleteCourse={deleteCourse}
+          />
+        ))}
+        <button
+          onClick={addCourse}
+          className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+        >
+          + Course
+        </button>
+      </div>
   );
 };
 export default CurriculumCoursesPage;

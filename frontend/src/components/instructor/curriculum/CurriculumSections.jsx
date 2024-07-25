@@ -8,7 +8,9 @@ import {
   deleteQuiz,
   updateSection as updateSectionApi,
 } from "../../../API/curriculumApi";
+import { useThemedStyles } from "../../../hooks/ThemeContrast";
 const CurriculumSection = ({ section, updateSection, deleteSection }) => {
+  const { backgroundColor, textColor, cardBackground } = useThemedStyles();
   const [items, setItems] = useState(section.items || []);
   const [title, setTitle] = useState(section.title);
   const [isSectionConfirmed, setIsSectionConfirmed] = useState(!!section.title);
@@ -19,6 +21,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [quizCount, setQuizCount] = useState("");
 
   const getSections = async () => {
+    
     const ItemsData = await fetchItems(section.course_id, section.section_id);
     let lectureCounter = 0;
     let quizCounter = 0;
@@ -124,7 +127,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <h2 className="font-bold text-lg mb-2">
+        <h2 className={`font-bold text-lg mb-2 ${textColor}}`}>
           Section {section.section_id}: {section.title}
         </h2>
         {showButton && isEditing == false && (

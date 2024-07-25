@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGlobe } from "@fortawesome/free-solid-svg-icons";
+import { faGlobe, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useThemedStyles } from "../../hooks/ThemeContrast.jsx";
 const Profile = () => {
+  const { backgroundColor, textColor, headerColor, cardBackground } = useThemedStyles();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [username, setUsername] = useState("");
   const [showLanguageSettingsModal, setShowLanguageSettingsModal] =
@@ -29,6 +30,21 @@ const Profile = () => {
     navigate("/userSettings");
   };
 
+  const menuItemClass = `block w-full text-left px-4 py-2 ${textColor} hover:${backgroundColor} hover:${textColor} transition duration-150 ease-in-out`;
+
+  const sampleQuestions = [
+    {
+      id: 1,
+      text: 'What is the capital of France?',
+      type: 'multiple-choice',
+      choices: ['Paris', 'London', 'Berlin', 'Madrid'],
+    },
+    {
+      id: 2,
+      text: 'Explain the theory of relativity.',
+      type: 'essay',
+    },
+  ];
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
@@ -52,10 +68,13 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className="flex items-center relative">
+    <div className={`flex items-center w-full ${headerColor} justify-end shadow-lg`}>
       {username ? (
         <>
           <Link to="/instructor" className="text-lg font-bold mr-4">
+            Instructor
+          </Link>
+          <Link to="/userquestions" state = {{sampleQuestions}} className="text-lg font-bold mr-4">
             Instructor
           </Link>
           <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
@@ -64,28 +83,27 @@ const Profile = () => {
             </div>
 
             {dropdownVisible && (
-              <div className="absolute top-12 right-9 bg-white border border-gray-200 shadow-lg py-2 w-40">
+              <div
+                className={`absolute top-12 right-9 ${cardBackground} border border-gray-200  rounded-md overflow-hidden w-48`}
+              >
                 <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className={`${menuItemClass} border-b border-gray-200`}
                   onClick={handleUserSetting}
                 >
+                  <FontAwesomeIcon icon={faUser} className="mr-2" />
                   Edit Profile
                 </button>
                 <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100 flex justify-between items-center"
+                  className={`${menuItemClass} border-b border-gray-200 flex justify-between items-center`}
                   onClick={() => setShowLanguageSettingsModal(true)}
                 >
-                  Language
+                  <span>Language</span>
                   <span className="flex items-center">
-                    <i className="fas fa-globe mr-2"></i>
-                    asd
+                    <FontAwesomeIcon icon={faGlobe} className="mr-2" />
                   </span>
-                  <FontAwesomeIcon icon={faGlobe} className="text-xl" />
                 </button>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                  onClick={handleLogOutButton}
-                >
+                <button className={menuItemClass} onClick={handleLogOutButton}>
+                  <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
                   Log out
                 </button>
               </div>

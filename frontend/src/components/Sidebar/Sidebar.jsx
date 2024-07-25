@@ -30,12 +30,6 @@ const Sidebar = () => {
             My Courses
           </a>
         </li>
-        <li className="flex items-center space-x-2 py-2">
-          <FontAwesomeIcon icon={faHome} className="text-xl" />
-          <Link to="/Collaboration" className="hover:text-gray-400">
-            Collaboration
-          </Link>
-        </li>
       </ul>
     </div>
   );
