@@ -78,8 +78,7 @@ const deleteCourses = (req, res) => {
 };
 const publishCourse = (req, res) => {
   const { course_id } = req.body;
-  const sql =
-    "UPDATE Courses SET status = 'published' WHERE id = ?";
+  const sql = "UPDATE Courses SET status = 'published' WHERE id = ?";
   db.query(sql, [course_id], (err, result) => {
     if (err) {
       console.log(err);
@@ -87,7 +86,6 @@ const publishCourse = (req, res) => {
     res.send(result);
   });
 };
-
 
 const insertSection = (req, res) => {
   const { course_id, section_id, title, description } = req.body;
@@ -120,7 +118,8 @@ const deleteSection = (req, res) => {
 
 const selectSection = (req, res) => {
   const { course_id } = req.query;
-  const sql = "SELECT * FROM Sections WHERE course_id = ? && status != 'disable'";
+  const sql =
+    "SELECT * FROM Sections WHERE course_id = ? && status != 'disable'";
   db.query(sql, [course_id], (err, results) => {
     if (err) throw err;
     res.send(results);
@@ -263,14 +262,10 @@ const deleteQuiz = (req, res) => {
   const { quiz_id, course_id, section_id } = req.body;
   const sql =
     "UPDATE quiz SET status = 'disable' WHERE quiz_id = ? && course_id = ? && section_id = ?";
-  db.query(
-    sql,
-    [quiz_id, course_id, section_id],
-    (err, result) => {
-      if (err) throw err;
-      res.send(result);
-    }
-  );
+  db.query(sql, [quiz_id, course_id, section_id], (err, result) => {
+    if (err) throw err;
+    res.send(result);
+  });
 };
 
 const getVideos = (req, res) => {
@@ -283,61 +278,181 @@ const getVideos = (req, res) => {
   });
 };
 
-// app.get('/api/questions', (req, res) => {
-//   const { section_id } = req.query;
-//   const sql = 'SELECT * FROM Questions WHERE section_id = ?';
-//   db.query(sql, [section_id], (err, results) => {
-//     if (err) throw err;
-//     res.send(results);
-//   });
-// });
+const insertQuestions = (req, res) => {
+  const { Quiz_id, course_id, section_id, type_id, question_text } = req.body;
+  const query =
+    'INSERT INTO Questions (Quiz_id, course_id, section_id, type_id, question_text, status) VALUES (?, ?, ?, ?, ?, "active")';
 
-// app.put('/api/questions/:id', (req, res) => {
-//   const { id } = req.params;
-//   const { question_text, question_type_id } = req.body;
-//   const sql = 'UPDATE Questions SET question_text = ?, question_type_id = ? WHERE question_id = ?';
-//   db.query(sql, [question_text, question_type_id, id], (err, result) => {
-//     if (err) throw err;
-//     res.send(result);
-//   });
-// });
+  db.query(
+    query,
+    [Quiz_id, course_id, section_id, type_id, question_text],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res
+        .status(201)
+        .json({
+          message: "Question created successfully",
+          id: result.insertId,
+        });
+    }
+  );
+};
 
-// app.delete('/api/questions/:id', (req, res) => {
-//   const { id } = req.params;
-//   const sql = 'DELETE FROM Questions WHERE question_id = ?';
-//   db.query(sql, [id], (err, result) => {
-//     if (err) throw err;
-//     res.send(result);
-//   });
-// });
+const getQuestions = (req, res) => {
+  const { course_id, section_id, quiz_id } = req.query;
+  const query =
+    "SELECT * FROM Questions WHERE quiz_id = ? && course_id = ? && section_id = ?";
 
-// app.post('/api/answers', (req, res) => {
-//   const { question_id, answer_text, is_correct } = req.body;
-//   const sql = 'INSERT INTO Answers (question_id, answer_text, is_correct) VALUES (?, ?, ?)';
-//   db.query(sql, [question_id, answer_text, is_correct], (err, result) => {
-//     if (err) throw err;
-//     res.send(result);
-//   });
-// });
+  db.query(query, [quiz_id, course_id, section_id], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(results);
+  });
+};
 
-// app.get('/api/answers', (req, res) => {
-//   const { question_id } = req.query;
-//   const sql = 'SELECT * FROM Answers WHERE question_id = ?';
-//   db.query(sql, [question_id], (err, results) => {
-//     if (err) throw err;
-//     res.send(results);
-//   });
-// });
+const updateQuestions = (req, res) => {
+  const { Quiz_id, course_id, section_id, type_id, question_text } = req.body;
+  const query =
+    "UPDATE Questions SET Quiz_id = ?, course_id = ?, section_id = ?, type_id = ?, question_text = ? WHERE question_id = ?";
 
-// app.put('/api/answers/:id', (req, res) => {
-//   const { id } = req.params;
-//   const { answer_text, is_correct } = req.body;
-//   const sql = 'UPDATE Answers SET answer_text = ?, is_correct = ? WHERE answer_id = ?';
-//   db.query(sql, [answer_text, is_correct, id], (err, result) => {
-//     if (err) throw err;
-//     res.send(result);
-//   });
-// });
+  db.query(
+    query,
+    [
+      Quiz_id,
+      course_id,
+      section_id,
+      type_id,
+      question_text,
+      status,
+      req.params.id,
+    ],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      if (result.affectedRows === 0) {
+        res.status(404).json({ message: "Question not found" });
+        return;
+      }
+      res.json({ message: "Question updated successfully" });
+    }
+  );
+};
+
+const deleteQuestions = (req, res) => {
+  const { questions_id } = req.body;
+  const query = 'UPDATE Questions SET status = "disabled" question_id = ?';
+
+  db.query(query, [questions_id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ message: "Question not found" });
+      return;
+    }
+    res.json({ message: "Question deleted successfully" });
+  });
+};
+
+const insertAnswers = (req, res) => {
+  const { option_id, question_id, answer_text } = req.body;
+  const query =
+    'INSERT INTO Answers (option_id, question_id, answer_text, status) VALUES (?, ?, ?, "Active")';
+
+  db.query(query, [option_id, question_id, answer_text], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res
+      .status(201)
+      .json({ message: "Answer created successfully", id: result.insertId });
+  });
+};
+
+const getAnswers = (req, res) => {
+  const { course_id, section_id, answer_id } = req.query;
+  const query =
+    "SELECT * FROM Answers WHERE answer_id = ? && course_id = ? && section_id = ?";
+
+  db.query(query, [answer_id, course_id, section_id], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(results);
+  });
+};
+
+const updateAnswer = (req, res) => {
+  const { option_id, question_id, answer_text, asnwer_id } = req.body;
+  const query =
+    "UPDATE Answers SET option_id = ?, question_id = ?, answer_text = ? WHERE answer_id = ?";
+
+  db.query(
+    query,
+    [option_id, question_id, answer_text, asnwer_id],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      if (result.affectedRows === 0) {
+        res.status(404).json({ message: "Answer not found" });
+        return;
+      }
+      res.json({ message: "Answer updated successfully" });
+    }
+  );
+};
+
+const deleteAnswer = (req, res) => {
+  const { answer_id } = req.body;
+  const query = 'Update Answers SET status = "disable" where answer_id = ? ';
+
+  db.query(query, [answer_id], (err, result) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    if (result.affectedRows === 0) {
+      res.status(404).json({ message: "Answer not found" });
+      return;
+    }
+    res.json({ message: "Answer deleted successfully" });
+  });
+};
+
+const insertQuestionsOptions = (req, res) => {
+  const { question_id, option_text } = req.body;
+  const query =
+    'INSERT INTO options (question_id, option_text, status) VALUES (?, ?, "active")';
+
+  db.query(
+    query,
+    [question_id, option_text],
+    (err, result) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res
+        .status(201)
+        .json({
+          message: "option created successfully",
+          id: result.insertId,
+        });
+    }
+  );
+};
 
 module.exports = {
   upload,
@@ -360,4 +475,12 @@ module.exports = {
   insertQuiz,
   updateQuiz,
   deleteQuiz,
+  insertQuestions,
+  getQuestions,
+  updateQuestions,
+  deleteQuestions,
+  insertAnswers,
+  updateAnswer,
+  deleteAnswer,
+  getAnswers,
 };

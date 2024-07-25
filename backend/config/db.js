@@ -90,25 +90,6 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       if (err) throw err;
     });
 
-    const createQuestionsTypeTableQuery = `
-    CREATE TABLE IF NOT EXISTS QuestionTypes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name varchar(100) NOT NULL
-  )`;
-    db.query(createQuestionsTypeTableQuery, (err, result) => {
-      if (err) throw err;
-
-      const insertEssayQuery = `INSERT INTO QuestionTypes (name) VALUES ('Essay')`;
-      db.query(insertEssayQuery, (err, result) => {
-        if (err) throw err;
-      });
-
-      const insertMultipleChoiceQuery = `INSERT INTO QuestionTypes (name) VALUES ('Multiple Choice')`;
-      db.query(insertMultipleChoiceQuery, (err, result) => {
-        if (err) throw err;
-      });
-    });
-
     const createQuizQuery = `
     CREATE TABLE IF NOT EXISTS Quiz (
       Quiz_id Int,
@@ -131,10 +112,9 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       Quiz_id INT,
       course_id INT,
       section_id INT,
-      type_id INT,
+      question_type ENUM('multiple_choice', 'essay') NOT NULL,
       question_text TEXT NOT NULL,
       status varchar(50),
-      FOREIGN KEY (type_id) REFERENCES QuestionTypes(id) ON DELETE CASCADE,
       FOREIGN KEY(Quiz_id, course_id, section_id) REFERENCES Quiz(Quiz_id, course_id, section_id) ON DELETE CASCADE
     )`;
     db.query(createQuestionsTableQuery, (err, result) => {
@@ -146,6 +126,7 @@ CREATE TABLE IF NOT EXISTS Options (
   options_id INT AUTO_INCREMENT primary key,
   question_id INT,
   option_text VARCHAR(255) NOT NULL,
+    is_correct BOOLEAN DEFAULT FALSE,
   status VARCHAR(50),
   FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE
 )`;
@@ -156,12 +137,10 @@ CREATE TABLE IF NOT EXISTS Options (
     const createAnswersTableQuery = `
     CREATE TABLE IF NOT EXISTS Answers (
       answer_id Int AUTO_INCREMENT primary key,
-      option_id INT,
       question_id INT,
       answer_text TEXT,
       status varchar(50),
-      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE,
-      FOREIGN KEY (option_id) REFERENCES Options(options_id) ON DELETE CASCADE
+      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE
     )`;
     db.query(createAnswersTableQuery, (err, result) => {
       if (err) throw err;
