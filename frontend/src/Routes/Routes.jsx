@@ -8,7 +8,11 @@ import UserQuestion from "../components/instructor/questions/userQuestions";
 import CommentsSection from "../components/comments/commentSection";
 import InstructorMenu from "../components/instructor/instructorMenu";
 import CurriculumCoursesPage from "../components/instructor/curriculum/CurriculumCoursePage";
-import EnrolledCoursePage from "../pages/Course/enrolledCoursePage";
+import CourseDetailsPage from "../pages/Course/CourseDetails";
+import EnrolledCoursesPage from "../pages/Course/EnrolledCoursePage";
+import CoursePage from "../pages/Course/AccessCourse";
+import CourseEditPage from "../components/instructor/curriculum/EditCourse";
+import UserSettings from "../components/profile/userSettings";
 const LoggedinRoutes = [
   {
     path: "/",
@@ -39,6 +43,10 @@ const LoggedinRoutes = [
     element: <UserQuestion />,
   },
   {
+    path: "/userSettings",
+    element: <UserSettings />,
+  },
+  {
     path: "/commentSection",
     element: <CommentsSection />,
   },
@@ -47,14 +55,26 @@ const LoggedinRoutes = [
     element: <InstructorMenu />,
     children: [
       {
-        path: "course/courseid",
+        path: "courses",
         element: <CurriculumCoursesPage />,
+      },
+      {
+        path: "course/:courseId",
+        element: <CourseEditPage />,
       },
     ],
   },
   {
     path: "/Courses/:courseId",
-    element: <EnrolledCoursePage />,
+    element: <CourseDetailsPage />,
+  },
+  {
+    path: "/AccessedCourses/:courseId",
+    element: <CoursePage />,
+  },
+  {
+    path: "/EnrolledCourses",
+    element: <EnrolledCoursesPage />,
   },
 ];
 export default LoggedinRoutes;
