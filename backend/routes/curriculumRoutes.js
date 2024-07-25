@@ -1,9 +1,9 @@
 const express = require("express");
 const {
-  getCourses,insertCourse,updateCourses,deleteCourses,getPublicCourses,  enrollCourse, getSelectedCourseDetails,
+  getCourses,insertCourse,updateCourses,deleteCourses,getSelectedCourses, publishCourse,
   insertSection,updateSection,deleteSection,selectSection,
   deleteLecture,updateLecture,selectItems,insertLecture,
-  insertQuiz,
+  insertQuiz, updateQuiz, deleteQuiz,
   uploadVideo,upload,
   getVideos,
 
@@ -12,8 +12,7 @@ const verifyToken = require("../middleware/authMiddleware");
 const router = express.Router();
 
 router.get("/courses", verifyToken, getCourses);
-router.get("/publicCourses", getPublicCourses);
-router.get("/courses/:courseId", getSelectedCourseDetails);
+router.get("/courses/:courseId", verifyToken, getSelectedCourses);
 router.get("/section", selectSection);
 router.get("/items", selectItems);
 router.get("/videos", getVideos);
@@ -23,7 +22,7 @@ router.post("/section", insertSection);
 router.post("/lecture", insertLecture);
 router.post("/quiz", insertQuiz);
 router.post("/uploadVideo", upload.single("video"), uploadVideo);
-router.post("/enroll", verifyToken, enrollCourse);
+
 
 router.put("/courses/update", verifyToken, deleteCourses);
 router.put("/courses", verifyToken, updateCourses);
@@ -31,6 +30,9 @@ router.put("/section/update", deleteSection);
 router.put("/section", updateSection);
 router.put("/lecture/update", deleteLecture);
 router.put("/lecture", updateLecture);
+router.put("/quiz", updateQuiz);
+router.put("/quiz/update", deleteQuiz);
+router.put("/publish", publishCourse);
 
 
 module.exports = router;

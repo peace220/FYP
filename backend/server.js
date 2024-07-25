@@ -13,12 +13,14 @@ const port = 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
+app.use('/uploads', express.static('uploads'));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/api/curriculum',curriculumRoutes);
+app.use('/api/curriculum', curriculumRoutes);
 
-app.use('/videos', express.static(path.join(__dirname, 'uploads')));
+app.use(express.static('public'));
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

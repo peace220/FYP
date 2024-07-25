@@ -79,6 +79,7 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       lecture_id INT,
       course_id INT,
       section_id INT,
+      order_num INT NOT NULL,
       title VARCHAR(255) NOT NULL,
       description TEXT,
       status VARCHAR(50),
@@ -96,6 +97,16 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
   )`;
     db.query(createQuestionsTypeTableQuery, (err, result) => {
       if (err) throw err;
+
+      const insertEssayQuery = `INSERT INTO QuestionTypes (name) VALUES ('Essay')`;
+      db.query(insertEssayQuery, (err, result) => {
+        if (err) throw err;
+      });
+
+      const insertMultipleChoiceQuery = `INSERT INTO QuestionTypes (name) VALUES ('Multiple Choice')`;
+      db.query(insertMultipleChoiceQuery, (err, result) => {
+        if (err) throw err;
+      });
     });
 
     const createQuizQuery = `
@@ -103,6 +114,7 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
       Quiz_id Int,
       course_id INT,
       section_id INT,
+      order_num INT NOT NULL,
       title VARCHAR(255),
       description TEXT,
       status varchar(50),
@@ -112,7 +124,6 @@ db.query("CREATE DATABASE IF NOT EXISTS userdb", (err, result) => {
     db.query(createQuizQuery, (err, result) => {
       if (err) throw err;
     });
-
 
     const createQuestionsTableQuery = `
     CREATE TABLE IF NOT EXISTS Questions (

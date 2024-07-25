@@ -4,8 +4,10 @@ import {
   createQuiz,
   createLecture,
   fetchItems,
+  deleteLecture,
+  deleteQuiz,
   updateSection as updateSectionApi,
-} from "../../../API/courseApi";
+} from "../../../API/curriculumApi";
 const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [items, setItems] = useState(section.items || []);
   const [title, setTitle] = useState(section.title);
@@ -13,69 +15,66 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [showButton, setShowButton] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [description, setDescription] = useState(section.description);
-  const [lectureCount, setLectureCount] = useState(
-    items.filter((item) => item.type === "lecture").length
-  );
-  const [quizCount, setQuizCount] = useState(
-    items.filter((item) => item.type === "quiz").length
-  );
+  const [lectureCount, setLectureCount] = useState("");
+  const [quizCount, setQuizCount] = useState("");
 
   const getSections = async () => {
-    const ItemsData = await fetchItems(
-      section.course_id,
-      section.section_id
-    );
-    setItems(ItemsData);
-    if(ItemsData.length != 0){
-      setLectureCount(ItemsData.filter((item) => item.type === "lecture").length);
-      setQuizCount(ItemsData.filter((item) => item.type === "quiz").length)
-    }
+    const ItemsData = await fetchItems(section.course_id, section.section_id);
+    let lectureCounter = 0;
+    let quizCounter = 0;
+    let maxLectureId = 0;
+    let maxQuizId = 0;
+    const rearrangedData = ItemsData.map((item) => {
+      if (item.type === "lecture") {
+        lectureCounter++;
+        maxLectureId = Math.max(maxLectureId, item.id);
+        return { ...item, arranged_id: lectureCounter };
+      } else if (item.type === "quiz") {
+        quizCounter++;
+        maxQuizId = Math.max(maxQuizId, item.id);
+        return { ...item, arranged_id: quizCounter };
+      }
+      return item;
+    });
+    setLectureCount(maxLectureId);
+    setQuizCount(maxQuizId)
+    setItems(rearrangedData);
   };
 
   const addItem = async (type) => {
-    if (items.length == 0) {
+    if (items.length === 0) {
       const newItem = {
         id: type === "lecture" ? lectureCount + 1 : quizCount + 1,
         section_id: section.section_id,
         course_id: section.course_id,
+        order_num: items.length + 1,
         type,
         title: "",
         description: "",
       };
-      const updatedItems = [...items, newItem];
-      setItems(updatedItems);
       if (type === "lecture") {
-        setLectureCount(lectureCount + 1);
-      } else if (type === "quiz") {
-        setQuizCount(quizCount + 1);
-      }
-
-      if (type == "lecture") {
         await createLecture(newItem);
-      } else if (type == "quiz") {
+        getSections();
+      } else if (type === "quiz") {
         await createQuiz(newItem);
+        getSections();
       }
     } else {
       const newItem = {
         id: type === "lecture" ? lectureCount + 1 : quizCount + 1,
         section_id: section.section_id,
         course_id: section.course_id,
+        order_num: items.length + 1,
         type,
         title: "",
         description: "",
       };
-      const updatedItems = [...items, newItem];
-      setItems(updatedItems);
       if (type === "lecture") {
-        setLectureCount(lectureCount + 1);
-      } else if (type === "quiz") {
-        setQuizCount(quizCount + 1);
-      }
-
-      if (type == "lecture") {
         await createLecture(newItem);
-      } else if (type == "quiz") {
+        getSections();
+      } else if (type === "quiz") {
         await createQuiz(newItem);
+        getSections();
       }
     }
   };
@@ -87,16 +86,14 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
     setItems(updatedItems);
   };
 
-  const deleteItem = (itemId, itemType) => {
-    const updatedItems = items.filter(
-      (item) => item.id !== itemId || item.type !== itemType
-    );
-    setItems(updatedItems);
-
+  const deleteItem = (itemId, itemSectionId, itemCourseId, itemType) => {
+    console.log(itemSectionId)
     if (itemType === "lecture") {
-      setLectureCount(lectureCount - 1);
+      deleteLecture(itemId,itemSectionId,itemCourseId);
+      getSections()
     } else if (itemType === "quiz") {
-      setQuizCount(quizCount - 1);
+      deleteQuiz(itemId,itemSectionId,itemCourseId);
+      getSections()
     }
   };
 
@@ -174,14 +171,16 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
         </>
       ) : (
         <div>
-          {items.map((item, index) => (
-            <CurriculumItem
-              key={index}
-              item={item}
-              updateItem={updateItem}
-              deleteItem={(itemId) => deleteItem(itemId, item.type)}
-            />
-          ))}
+          {items
+            .sort((a, b) => a.order_num - b.order_num)
+            .map((item, index) => (
+              <CurriculumItem
+                key={index}
+                item={item}
+                updateItem={updateItem}
+                deleteItem={(itemId) => deleteItem(itemId,item.section_id,item.course_id, item.type)}
+              />
+            ))}
           <button
             onClick={() => addItem("lecture")}
             className="bg-blue-500 text-white px-2 py-1 rounded mt-2 mr-2"

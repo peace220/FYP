@@ -4,8 +4,7 @@ import {
   fetchCourses,
   createCourse,
   deleteCourse as deleteCourseApi,
-} from "../../../API/courseApi";
-
+} from "../../../API/curriculumApi";
 const CurriculumCoursesPage = () => {
   const [courses, setCourses] = useState([]);
   const getCourses = async () => {
@@ -15,7 +14,6 @@ const CurriculumCoursesPage = () => {
   useEffect(() => {
     getCourses();
   }, []);
-
   const addCourse = async () => {
     if (courses.length == 0) {
       const newCourse = {
@@ -35,19 +33,16 @@ const CurriculumCoursesPage = () => {
       setCourses([...courses, newCourse]);
     }
   };
-
   const updateCourse = (courseId, updatedCourse) => {
     const updatedCourses = courses.map((course) =>
       course.id === courseId ? updatedCourse : course
     );
     setCourses(updatedCourses);
   };
-
   const deleteCourse = async (courseId) => {
     await deleteCourseApi(courseId);
     getCourses();
   };
-
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Curriculum</h1>
@@ -68,5 +63,4 @@ const CurriculumCoursesPage = () => {
     </div>
   );
 };
-
 export default CurriculumCoursesPage;

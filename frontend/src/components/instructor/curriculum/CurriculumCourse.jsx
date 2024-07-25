@@ -4,7 +4,9 @@ import {
   updateCourses as updateCourseApi,
   fetchSections,
   createSection,
-} from "../../../API/courseApi";
+  publishCourse as publishCourseApi,
+} from "../../../API/curriculumApi";
+import ThemedButton from "../../Theme/ThemeButton";
 
 const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
   const [sections, setSections] = useState(course.sections || []);
@@ -63,6 +65,10 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     await updateCourseApi(courseData);
   };
 
+  const publishCourse = async () => {
+    await publishCourseApi(course.id);
+  };
+
   const cancelEdit = () => {
     setShowButton(true);
     setIsEditing(false);
@@ -92,18 +98,18 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
         </h2>
         {showButton && isEditing == false && (
           <div>
-            <button
+            <ThemedButton
+              type="edit"
               onClick={() => setIsEditing(true)}
-              className="bg-green-500 text-white px-2 py-1 rounded mr-3"
             >
               Edit
-            </button>
-            <button
+            </ThemedButton>
+            <ThemedButton
+              type="delete"
               onClick={() => deleteCourse(course.id)}
-              className="bg-red-500 text-white px-2 py-1 rounded"
             >
               Delete
-            </button>
+            </ThemedButton>
           </div>
         )}
       </div>
@@ -124,18 +130,18 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
             className="w-full px-3 py-2 border rounded mb-2"
           />
           <div className="flex justify-end space-x-2">
-            <button
+            <ThemedButton
+              type="delete"
               onClick={cancelEdit}
-              className="bg-red-500 text-white px-2 py-1 rounded"
             >
               Cancel
-            </button>
-            <button
+            </ThemedButton>
+            <ThemedButton
+              type="store"
               onClick={saveCourse}
-              className="bg-green-500 text-white px-2 py-1 rounded"
             >
               Confirm
-            </button>
+            </ThemedButton>
           </div>
         </>
       ) : (
@@ -148,14 +154,20 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
               deleteSection={deleteSection}
             />
           ))}
-          <button
+          <ThemedButton
+            type="store"
             onClick={addSection}
-            className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
           >
             + Section
-          </button>
+          </ThemedButton>
         </div>
       )}
+      <ThemedButton
+        type="store"
+        onClick={publishCourse}
+      >
+        publish
+      </ThemedButton>
     </div>
   );
 };
