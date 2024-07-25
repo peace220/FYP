@@ -30,7 +30,6 @@ const getComments = (req, res) => {
 const postComments = (req, res) => {
   const userId = req.userId;
   const { text, parent_id, course_id } = req.body; 
-  console.log(course_id);
   const sql =
     "INSERT INTO comments (user_Id, text, parent_id, course_id) VALUES (?, ?, ?, ?)"; 
   db.query(sql, [userId, text, parent_id, course_id], (err, result) => {

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-const Comment = ({ comment }) => {
+
+const Comment = ({ comment, refetchComments }) => {
   const { courseId } = useParams();
-  const [replies, setReplies] = useState(comment.replies || []);
   const [replyText, setReplyText] = useState("");
   const [showReplyBox, setShowReplyBox] = useState(false);
 
@@ -20,7 +20,7 @@ const Comment = ({ comment }) => {
           headers: { "x-access-token": localStorage.getItem("token") },
         }
       );
-      setReplies([...replies, { ...response.data, replies: [] }]);
+      refetchComments();
       setReplyText("");
       setShowReplyBox(false);
     }
@@ -43,6 +43,7 @@ const Comment = ({ comment }) => {
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             className="w-full p-2 border rounded-lg mb-2"
+            placeholder={`Replying to @${comment.username}`}
           ></textarea>
           <button
             onClick={handleReply}
@@ -52,11 +53,6 @@ const Comment = ({ comment }) => {
           </button>
         </div>
       )}
-      <div className="ml-4 mt-4">
-        {replies.map((reply) => (
-          <Comment key={reply.id} comment={reply} />
-        ))}
-      </div>
     </div>
   );
 };

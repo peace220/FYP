@@ -25,7 +25,7 @@ const CommentsSection = () => {
           headers: { "x-access-token": localStorage.getItem("token") },
         }
       );
-      setComments([...comments, { ...response.data, replies: [] }]);
+      fetchComments();
       setCommentText("");
     }
   };
@@ -36,6 +36,26 @@ const CommentsSection = () => {
     );
     setComments(response.data);
   };
+
+  const renderComments = (commentsList) => {
+    return commentsList.map((comment) => (
+      <div key={comment.id}>
+        <Comment comment={comment} refetchComments={fetchComments} />
+        {comment.replies && comment.replies.length > 0 && (
+          <div className="ml-8">
+            {comment.replies.map((reply) => (
+              <div key={reply.id} className="border-l-2 border-gray-200 pl-4 my-2">
+                <p>
+                  <strong>{reply.username}</strong> replying to @{comment.username}: {reply.text}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    ));
+  };
+
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Comments</h2>
@@ -53,9 +73,9 @@ const CommentsSection = () => {
           Post Comment
         </button>
       </div>
-      {comments.map((comment) => (
-        <Comment key={comment.id} comment={comment} />
-      ))}
+      <div className="overflow-y-auto max-h-60" style={{ maxHeight: "600px" }}> 
+        {renderComments(comments)}
+      </div>
     </div>
   );
 };
