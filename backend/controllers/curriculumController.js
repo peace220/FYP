@@ -229,6 +229,31 @@ const uploadVideo = (req, res) => {
   );
 };
 
+const uploadTranscript = async (req,res)=>{
+  if (!req.file) {
+    return res.status(400).json({ success: false, message: 'No file uploaded' });
+  }
+
+  const { videoId } = req.body;
+  const filePath = req.file.path;
+
+  try {
+    const transcriptContent = await fs.readFile(filePath, 'utf8');
+
+    const [result] = await pool.execute(
+      'INSERT INTO transcripts (video_id, transcript) VALUES (?, ?)',
+      [videoId, transcriptContent]
+    );
+
+    await fs.unlink(filePath);
+
+    res.json({ success: true, message: 'Transcript uploaded and stored successfully', id: result.insertId });
+  } catch (error) {
+    console.error('Error processing transcript:', error);
+    res.status(500).json({ success: false, message: 'Error processing transcript' });
+  }
+}
+
 const insertQuiz = (req, res) => {
   const { quiz_id, course_id, section_id, order_num, title, description } =
     req.body;
@@ -278,180 +303,279 @@ const getVideos = (req, res) => {
   });
 };
 
-const insertQuestions = (req, res) => {
-  const { Quiz_id, course_id, section_id, type_id, question_text } = req.body;
-  const query =
-    'INSERT INTO Questions (Quiz_id, course_id, section_id, type_id, question_text, status) VALUES (?, ?, ?, ?, ?, "active")';
+const insertQuestions = async (req, res) => {
+  const {
+    quiz_id,
+    course_id,
+    section_id,
+    question_type,
+    question_text,
+    options,
+    answer,
+  } = req.body;
 
-  db.query(
-    query,
-    [Quiz_id, course_id, section_id, type_id, question_text],
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res
-        .status(201)
-        .json({
-          message: "Question created successfully",
-          id: result.insertId,
-        });
+  db.beginTransaction((err) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: "Error starting transaction" });
     }
-  );
+
+    db.query(
+      "INSERT INTO Questions (Quiz_id, course_id, section_id, question_type, question_text, status) VALUES (?, ?, ?, ?, ?, ?)",
+      [quiz_id, course_id, section_id, question_type, question_text, "active"],
+      (err, questionResult) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error(err);
+            res.status(500).json({ message: "Error creating question" });
+          });
+        }
+
+        const questionId = questionResult.insertId;
+
+        if (question_type === "multiple_choice" && options) {
+          const optionInsertions = options.map((option) => {
+            return new Promise((resolve, reject) => {
+              db.query(
+                "INSERT INTO Options (question_id, option_text, is_correct, status) VALUES (?, ?, ?, ?)",
+                [questionId, option.text, option.is_correct, "active"],
+                (err) => {
+                  if (err) reject(err);
+                  else resolve();
+                }
+              );
+            });
+          });
+
+          Promise.all(optionInsertions)
+            .then(() => {
+              db.query(
+                "INSERT INTO Answers (question_id, answer_text, status) VALUES (?, ?, ?)",
+                [questionId, answer, "active"],
+                (err) => {
+                  if (err) {
+                    return db.rollback(() => {
+                      console.error(err);
+                      res
+                        .status(500)
+                        .json({ message: "Error creating answer" });
+                    });
+                  }
+
+                  db.commit((err) => {
+                    if (err) {
+                      return db.rollback(() => {
+                        console.error(err);
+                        res
+                          .status(500)
+                          .json({ message: "Error committing transaction" });
+                      });
+                    }
+                    res.status(201).json({
+                      message: "Question created successfully",
+                      questionId,
+                    });
+                  });
+                }
+              );
+            })
+            .catch((err) => {
+              db.rollback(() => {
+                console.error(err);
+                res.status(500).json({ message: "Error creating options" });
+              });
+            });
+        } else {
+          db.query(
+            "INSERT INTO Answers (question_id, answer_text, status) VALUES (?, ?, ?)",
+            [questionId, answer, "active"],
+            (err) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error(err);
+                  res.status(500).json({ message: "Error creating answer" });
+                });
+              }
+
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    console.error(err);
+                    res
+                      .status(500)
+                      .json({ message: "Error committing transaction" });
+                  });
+                }
+                res.status(201).json({
+                  message: "Question created successfully",
+                  questionId,
+                });
+              });
+            }
+          );
+        }
+      }
+    );
+  });
 };
 
 const getQuestions = (req, res) => {
-  const { course_id, section_id, quiz_id } = req.query;
-  const query =
-    "SELECT * FROM Questions WHERE quiz_id = ? && course_id = ? && section_id = ?";
+  const { quiz_id, course_id, section_id } = req.query;
+  db.query(
+    "SELECT q.* FROM Questions q JOIN Quiz qz ON q.Quiz_id = qz.Quiz_id WHERE qz.Quiz_id = ? AND qz.course_id = ? AND qz.section_id = ?",
+    [quiz_id, course_id, section_id],
+    (err, questions) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Error fetching questions" });
+      }
+      let processedQuestions = 0;
+      if (questions.length === 0) {
+        return res.json([]);
+      }
 
-  db.query(query, [quiz_id, course_id, section_id], (err, results) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
+      questions.forEach((question) => {
+        if (question.question_type === "multiple_choice") {
+          db.query(
+            "SELECT * FROM Options WHERE question_id = ?",
+            [question.question_id],
+            (err, options) => {
+              if (err) {
+                console.error(err);
+                return res
+                  .status(500)
+                  .json({ message: "Error fetching options" });
+              }
+              question.options = options;
+              getAnswer();
+            }
+          );
+        } else {
+          getAnswer();
+        }
+
+        function getAnswer() {
+          db.query(
+            "SELECT * FROM Answers WHERE question_id = ?",
+            [question.question_id],
+            (err, answers) => {
+              if (err) {
+                console.error(err);
+                return res
+                  .status(500)
+                  .json({ message: "Error fetching answers" });
+              }
+              question.answer = answers[0];
+              processedQuestions++;
+              if (processedQuestions === questions.length) {
+                res.json(questions);
+              }
+            }
+          );
+        }
+      });
     }
-    res.json(results);
-  });
+  );
 };
 
 const updateQuestions = (req, res) => {
-  const { Quiz_id, course_id, section_id, type_id, question_text } = req.body;
-  const query =
-    "UPDATE Questions SET Quiz_id = ?, course_id = ?, section_id = ?, type_id = ?, question_text = ? WHERE question_id = ?";
+  const {
+    question_text,
+    question_type,
+    question_id,
+    course_id,
+    section_id,
+    quiz_id,
+    options,
+    answer,
+  } = req.body;
 
-  db.query(
-    query,
-    [
-      Quiz_id,
-      course_id,
-      section_id,
-      type_id,
-      question_text,
-      status,
-      req.params.id,
-    ],
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      if (result.affectedRows === 0) {
-        res.status(404).json({ message: "Question not found" });
-        return;
-      }
-      res.json({ message: "Question updated successfully" });
-    }
-  );
-};
-
-const deleteQuestions = (req, res) => {
-  const { questions_id } = req.body;
-  const query = 'UPDATE Questions SET status = "disabled" question_id = ?';
-
-  db.query(query, [questions_id], (err, result) => {
+  db.beginTransaction((err) => {
     if (err) {
-      res.status(500).json({ error: err.message });
-      return;
+      console.error(err);
+      return res.status(500).json({ message: "Error starting transaction" });
     }
-    if (result.affectedRows === 0) {
-      res.status(404).json({ message: "Question not found" });
-      return;
-    }
-    res.json({ message: "Question deleted successfully" });
-  });
-};
 
-const insertAnswers = (req, res) => {
-  const { option_id, question_id, answer_text } = req.body;
-  const query =
-    'INSERT INTO Answers (option_id, question_id, answer_text, status) VALUES (?, ?, ?, "Active")';
+    db.query(
+      "UPDATE Questions SET question_text = ?, question_type = ?, course_id = ?, section_id = ?, Quiz_id = ? WHERE question_id = ?",
+      [
+        question_text,
+        question_type,
+        course_id,
+        section_id,
+        quiz_id,
+        question_id,
+      ],
+      (err, result) => {
+        if (err) {
+          return db.rollback(() => {
+            console.error(err);
+            res.status(500).json({ message: "Error updating question" });
+          });
+        }
 
-  db.query(query, [option_id, question_id, answer_text], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res
-      .status(201)
-      .json({ message: "Answer created successfully", id: result.insertId });
-  });
-};
+        if (question_type === "multiple_choice" && options) {
+          const updateOptionPromises = options.map((option) => {
+            return new Promise((resolve, reject) => {
+              if (option.options_id) {
+                db.query(
+                  "UPDATE Options SET option_text = ?, is_correct = ? WHERE options_id = ? AND question_id = ?",
+                  [
+                    option.option_text,
+                    option.is_correct,
+                    option.options_id,
+                    question_id,
+                  ],
+                  (err) => {
+                    if (err) reject(err);
+                    else resolve();
+                  }
+                );
+              }
+            });
+          });
 
-const getAnswers = (req, res) => {
-  const { course_id, section_id, answer_id } = req.query;
-  const query =
-    "SELECT * FROM Answers WHERE answer_id = ? && course_id = ? && section_id = ?";
+          Promise.all(updateOptionPromises)
+            .then(() => updateAnswer())
+            .catch((err) => {
+              db.rollback(() => {
+                console.error(err);
+                res.status(500).json({ message: "Error updating options" });
+              });
+            });
+        } else {
+          updateAnswer();
+        }
 
-  db.query(query, [answer_id, course_id, section_id], (err, results) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json(results);
-  });
-};
+        function updateAnswer() {
+          db.query(
+            "UPDATE Answers SET answer_text = ? WHERE question_id = ?",
+            [answer, question_id],
+            (err) => {
+              if (err) {
+                return db.rollback(() => {
+                  console.error(err);
+                  res.status(500).json({ message: "Error updating answer" });
+                });
+              }
 
-const updateAnswer = (req, res) => {
-  const { option_id, question_id, answer_text, asnwer_id } = req.body;
-  const query =
-    "UPDATE Answers SET option_id = ?, question_id = ?, answer_text = ? WHERE answer_id = ?";
-
-  db.query(
-    query,
-    [option_id, question_id, answer_text, asnwer_id],
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
+              db.commit((err) => {
+                if (err) {
+                  return db.rollback(() => {
+                    console.error(err);
+                    res
+                      .status(500)
+                      .json({ message: "Error committing transaction" });
+                  });
+                }
+                res.json({ message: "Question updated successfully" });
+              });
+            }
+          );
+        }
       }
-      if (result.affectedRows === 0) {
-        res.status(404).json({ message: "Answer not found" });
-        return;
-      }
-      res.json({ message: "Answer updated successfully" });
-    }
-  );
-};
-
-const deleteAnswer = (req, res) => {
-  const { answer_id } = req.body;
-  const query = 'Update Answers SET status = "disable" where answer_id = ? ';
-
-  db.query(query, [answer_id], (err, result) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    if (result.affectedRows === 0) {
-      res.status(404).json({ message: "Answer not found" });
-      return;
-    }
-    res.json({ message: "Answer deleted successfully" });
+    );
   });
-};
-
-const insertQuestionsOptions = (req, res) => {
-  const { question_id, option_text } = req.body;
-  const query =
-    'INSERT INTO options (question_id, option_text, status) VALUES (?, ?, "active")';
-
-  db.query(
-    query,
-    [question_id, option_text],
-    (err, result) => {
-      if (err) {
-        res.status(500).json({ error: err.message });
-        return;
-      }
-      res
-        .status(201)
-        .json({
-          message: "option created successfully",
-          id: result.insertId,
-        });
-    }
-  );
 };
 
 module.exports = {
@@ -478,9 +602,4 @@ module.exports = {
   insertQuestions,
   getQuestions,
   updateQuestions,
-  deleteQuestions,
-  insertAnswers,
-  updateAnswer,
-  deleteAnswer,
-  getAnswers,
 };

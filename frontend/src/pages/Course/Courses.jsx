@@ -7,7 +7,6 @@ import { useThemedStyles } from "../../hooks/ThemeContrast";
 const SelectCoursePage = () => {
   const { backgroundColor, textColor, cardBackground } = useThemedStyles();
   const [courses, setCourses] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,18 +16,13 @@ const SelectCoursePage = () => {
         setCourses(fetchedCourses);
       } catch (error) {
         console.error("Error fetching courses:", error);
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     };
 
     fetchCourseData();
   }, []);
 
   const renderContent = () => {
-    if (isLoading) {
-      return <p className={`text-xl ${textColor}`}>Loading courses...</p>;
-    }
 
     if (courses.length === 0) {
       return (

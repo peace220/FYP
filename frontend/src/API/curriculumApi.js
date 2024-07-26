@@ -49,7 +49,7 @@ export const deleteCourse = async (id) => {
 
 export const publishCourse = async (courseId) => {
   await axios.put(`${apiBaseUrl}/publish`, {
-    course_id: courseId
+    course_id: courseId,
   });
 };
 
@@ -163,6 +163,45 @@ export const fetchVideos = async (item) => {
       section_id: item.section_id,
       course_id: item.course_id,
     },
+  });
+  return response.data;
+};
+
+
+export const createQuestion = async (questionData) => {
+  const response = await axios.post(`${apiBaseUrl}/questions`, {
+    quiz_id: questionData.quiz_id,
+    course_id: questionData.course_id,
+    section_id: questionData.section_id,
+    question_type: questionData.question_type,
+    question_text: questionData.question_text,
+    options: questionData.options,
+    answer: questionData.answer,
+  });
+  return response.data;
+};
+
+export const getQuestions = async (questionData) => {
+  const response = await axios.get(`${apiBaseUrl}/questions`, {
+    params: {
+      quiz_id: questionData.id,
+      section_id: questionData.section_id,
+      course_id: questionData.course_id,
+    },
+  });
+  return response.data;
+};
+
+export const updateQuestions = async (questionData) => {
+  const response = await axios.put(`${apiBaseUrl}/question`, {
+      quiz_id: questionData.quiz_id,
+      section_id: questionData.section_id,
+      course_id: questionData.course_id,
+      question_id: questionData.question_id,
+      answer: questionData.answer,
+      options: questionData.options,
+      question_text: questionData.question_text,
+      question_type: questionData.question_type,
   });
   return response.data;
 };

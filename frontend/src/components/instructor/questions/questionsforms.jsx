@@ -1,11 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import {
+  createQuestion,
+  getQuestions,
+  updateQuestions,
+} from "../../../API/curriculumApi";
 
-const QuestionForm = () => {
+const QuestionForm = ({ item }) => {
   const [questionText, setQuestionText] = useState("");
-  const [questionType, setQuestionType] = useState("multiple-choice");
-  const [choices, setChoices] = useState([""]);
-  const [correctAnswer, setCorrectAnswer] = useState(null);
-  const [essayAnswer, setEssayAnswer] = useState("");
+  const [questionType, setQuestionType] = useState("multiple_choice");
+  const [options, setOptions] = useState([
+    { option_text: "", is_correct: false },
+    { option_text: "", is_correct: false },
+    { option_text: "", is_correct: false },
+    { option_text: "", is_correct: false },
+  ]);
+  const [answer, setAnswer] = useState("");
+  const [existingQuestion, setExistingQuestion] = useState(null);
+
+  const fetchQuestions = async () => {
+    try {
+      const questions = await getQuestions(item);
+      if (questions.length > 0) {
+        const question = questions[0];
+        setExistingQuestion(question);
+        setQuestionText(question.question_text);
+        setQuestionType(question.question_type);
+        if (question.question_type === "multiple_choice") {
+          setOptions(
+            question.options.length === 4
+              ? question.options
+              : [
+                  { option_text: "", is_correct: false },
+                  { option_text: "", is_correct: false },
+                  { option_text: "", is_correct: false },
+                  { option_text: "", is_correct: false },
+                ]
+          );
+        } else {
+          setAnswer(question.answer?.answer_text || "");
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
   const handleQuestionTextChange = (e) => {
     setQuestionText(e.target.value);
@@ -13,46 +55,63 @@ const QuestionForm = () => {
 
   const handleQuestionTypeChange = (e) => {
     setQuestionType(e.target.value);
-    setChoices([""]);
-    setCorrectAnswer(null);
-    setEssayAnswer("");
+    setOptions([
+      { option_text: "", is_correct: false },
+      { option_text: "", is_correct: false },
+      { option_text: "", is_correct: false },
+      { option_text: "", is_correct: false },
+    ]);
+    setAnswer("");
   };
 
-  const handleChoiceChange = (index, e) => {
-    const newChoices = [...choices];
-    newChoices[index] = e.target.value;
-    setChoices(newChoices);
+  const handleOptionChange = (index, e) => {
+    const newOptions = options.map((option, i) =>
+      i === index ? { ...option, option_text: e.target.value } : option
+    );
+    setOptions(newOptions);
   };
 
   const handleCorrectAnswerChange = (index) => {
-    setCorrectAnswer(index);
+    const newOptions = options.map((option, i) => ({
+      ...option,
+      is_correct: i === index,
+    }));
+    setOptions(newOptions);
   };
 
-  const handleEssayAnswerChange = (e) => {
-    setEssayAnswer(e.target.value);
+  const handleAnswerChange = (e) => {
+    setAnswer(e.target.value);
   };
 
-  const addChoice = () => {
-    setChoices([...choices, ""]);
-  };
 
-  const deleteChoice = (index) => {
-    const newChoices = choices.filter((_, i) => i !== index);
-    setChoices(newChoices);
-    if (index === correctAnswer) {
-      setCorrectAnswer(null);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
-      questionText,
-      questionType,
-      choices: questionType === "multiple-choice" ? choices : null,
-      correctAnswer: questionType === "multiple-choice" ? correctAnswer + 1 : null,
-      essayAnswer: questionType === "essay" ? essayAnswer : null,
-    });
+    const questionData = {
+      question_text: questionText,
+      question_type: questionType,
+      course_id: item.course_id,
+      section_id: item.section_id,
+      quiz_id: item.id,
+      options: questionType === "multiple_choice" ? options : null,
+      answer:
+        questionType === "multiple_choice"
+          ? options.find((option) => option.is_correct)?.option_text
+          : answer,
+    };
+    try {
+      if (existingQuestion) {
+        const updateData = {
+          ...questionData,
+          question_id: existingQuestion.question_id,
+        };
+        await updateQuestions(updateData);
+      } else {
+        await createQuestion(questionData);
+      }
+      await fetchQuestions();
+    } catch (error) {
+      console.error("Error saving question:", error);
+    }
   };
 
   return (
@@ -88,36 +147,30 @@ const QuestionForm = () => {
             onChange={handleQuestionTypeChange}
             className="w-full px-3 py-2 border rounded"
           >
-            <option value="multiple-choice">Multiple Choice</option>
+            <option value="multiple_choice">Multiple Choice</option>
             <option value="essay">Essay</option>
           </select>
         </div>
-        {questionType === "multiple-choice" && (
+        {questionType === "multiple_choice" && (
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Choices
+              Options
             </label>
-            {choices.map((choice, index) => (
+            {options.map((option, index) => (
               <div key={index} className="flex items-center mb-2">
                 <input
                   type="text"
-                  value={choice}
-                  onChange={(e) => handleChoiceChange(index, e)}
+                  value={option.option_text}
+                  onChange={(e) => handleOptionChange(index, e)}
                   className="w-full px-3 py-2 border rounded mr-2"
-                  placeholder={`Choice ${index + 1}`}
+                  required
+                  placeholder={`Option ${index + 1}`}
                 />
-                <button
-                  type="button"
-                  onClick={() => deleteChoice(index)}
-                  className="px-4 py-2 bg-red-500 text-white rounded mr-2"
-                >
-                  Delete
-                </button>
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
                     name="correctAnswer"
-                    checked={correctAnswer === index}
+                    checked={option.is_correct}
                     onChange={() => handleCorrectAnswerChange(index)}
                     className="form-radio text-indigo-600"
                   />
@@ -125,27 +178,20 @@ const QuestionForm = () => {
                 </label>
               </div>
             ))}
-            <button
-              type="button"
-              onClick={addChoice}
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-            >
-              Add Choice
-            </button>
           </div>
         )}
         {questionType === "essay" && (
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="essayAnswer"
+              htmlFor="answer"
             >
               Essay Answer
             </label>
             <textarea
-              id="essayAnswer"
-              value={essayAnswer}
-              onChange={handleEssayAnswerChange}
+              id="answer"
+              value={answer}
+              onChange={handleAnswerChange}
               className="w-full px-3 py-2 border rounded"
               placeholder="Enter the essay answer"
               rows="4"
@@ -157,7 +203,7 @@ const QuestionForm = () => {
             type="submit"
             className="px-4 py-2 bg-green-500 text-white rounded"
           >
-            Submit Question
+            {existingQuestion ? "Update Question" : "Submit Question"}
           </button>
         </div>
       </form>

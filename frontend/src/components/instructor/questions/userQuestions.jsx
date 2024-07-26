@@ -45,16 +45,15 @@ const UserQuestion = () => {
   const toggleSection = (sectionId) => {
     setActiveSection(activeSection === sectionId ? null : sectionId);
   };
-
   return (
     <Layout>
-      <div className="flex h-screen">
-        <div className={`w-1/4 bg-gray-100 p-4 overflow-y-auto ${backgroundColor}`}>
-          <h2 className="text-xl font-bold mb-4">Course Sections</h2>
+  <div className={`flex min-h-screen ${backgroundColor} shadow-lg`}>
+        <div className={`w-1/4 p-4 overflow-y-auto ${backgroundColor}`}>
+          <h2 className={`text-xl font-bold mb-4 ${textColor}`}>Course Sections</h2>
           {sections.map((section) => (
             <div key={section.id} className="mb-4">
               <button
-                className="w-full text-left font-semibold py-2 px-4 bg-white rounded shadow"
+                className={`w-full text-left font-semibold py-2 px-4 ${cardBackground} rounded shadow ${textColor}`}
                 onClick={() => toggleSection(section.id)}
               >
                 {section.title}
@@ -62,7 +61,7 @@ const UserQuestion = () => {
               {activeSection === section.id && (
                 <ul className="mt-2 ml-4">
                   {section.content.map((item) => (
-                    <li key={item.id} className="py-1">
+                    <li key={item.id} className={`py-1 ${textColor}`}>
                       <span
                         className={`mr-2 ${
                           item.type === "lecture"
@@ -81,15 +80,15 @@ const UserQuestion = () => {
           ))}
         </div>
 
-        <div className={`flex-1 p-4 bg-white overflow-y-auto ${backgroundColor}`}>
+        <div className={`flex-1 p-4 overflow-y-auto ${backgroundColor}`}>
           <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
             {questions.map((question) => (
-              <div key={question.id} className="mb-6 bg-gray-50 p-4 rounded-lg shadow">
-                <h3 className="text-lg font-bold mb-3">{question.text}</h3>
+              <div key={question.id} className={`mb-6 ${cardBackground} p-4 rounded-lg shadow`}>
+                <h3 className={`text-lg font-bold mb-3 ${textColor}`}>{question.text}</h3>
                 {question.type === "multiple-choice" ? (
                   <div className="mb-4">
                     {question.choices.map((choice, index) => (
-                      <label key={index} className="block mb-2">
+                      <label key={index} className={`block mb-2 ${textColor}`}>
                         <input
                           type="radio"
                           name={`question-${question.id}`}
@@ -111,7 +110,7 @@ const UserQuestion = () => {
                       onChange={(e) =>
                         handleAnswerChange(question.id, e.target.value)
                       }
-                      className="w-full px-3 py-2 border rounded"
+                      className={`w-full px-3 py-2 border rounded ${backgroundColor} ${textColor}`}
                       placeholder="Write your answer here"
                     ></textarea>
                   </div>
@@ -121,7 +120,7 @@ const UserQuestion = () => {
             <div className="text-right">
               <button
                 type="submit"
-                className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                className={`px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors`}
               >
                 Submit Answers
               </button>

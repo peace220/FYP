@@ -135,7 +135,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
       ) : (
         <>
           {item.type === "quiz" ? (
-            <QuestionForm />
+            <QuestionForm item = {item} />
           ) : (
             <div>
               <div className="mb-2">

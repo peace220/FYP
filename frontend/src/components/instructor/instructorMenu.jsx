@@ -6,7 +6,7 @@ const InstructorPage = () => {
   const { backgroundColor, textColor } = useThemedStyles();
   return (
     <div className={`min-h-screen ${backgroundColor}`}>
-      <div className="flex justify-end items-center h-12">
+      <div className="flex justify-end items-center h-12 shadow-lg">
         <Link to="/" className={`text-lg font-bold mr-10 ${textColor}`}>
           Student
         </Link>
