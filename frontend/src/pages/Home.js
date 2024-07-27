@@ -49,7 +49,13 @@ function Home() {
           <h1 className={`text-5xl font-bold mb-6 text-center ${textColor}`}>
             Welcome to Inclusive Learning
           </h1>
-          <TTSButton text={welcomeMessage} className="mb-8 mx-auto block" />
+          <div className="flex">
+            <p>
+              Welcome to our inclusive learning platform. Explore our features
+              and start your learning journey today!
+            </p>
+            <TTSButton text={welcomeMessage} className="mb-8 mx-auto block" />
+          </div>
 
           <div>
             <h2 className={`text-3xl font-semibold mb-6 ${textColor}`}>

@@ -61,6 +61,19 @@ export const useThemedStyles = () => {
     }
   };
 
+
+  const getAccordionHeaderBackground = () => {
+    return theme === "dark"
+      ? "bg-gray-700 hover:bg-gray-600"
+      : "bg-blue-100 hover:bg-blue-200";
+  };
+
+  const getAccordionContentBackground = () => {
+    return theme === "dark"
+      ? "bg-gray-800 hover:bg-gray-700"
+      : "bg-white hover:bg-gray-100";
+  };
+
   return {
     backgroundColor: getBackgroundColor(),
     textColor: getTextColor(),
@@ -70,5 +83,7 @@ export const useThemedStyles = () => {
     editButtonStyle: getButtonStyles("edit"),
     storeButtonStyle: getButtonStyles("store"),
     defaultButtonStyle: getButtonStyles("default"),
+    accordionHeaderBackground: getAccordionHeaderBackground(),
+    accordionContentBackground: getAccordionContentBackground(),
   };
 };
