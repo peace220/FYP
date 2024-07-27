@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSpeechSynthesis } from "react-speech-kit";
-import { useThemedStyles } from "../../hooks/ThemeContrast";
 
 const TTSButton = ({ text }) => {
   const { speak, cancel } = useSpeechSynthesis();
-  const { textColor } = useThemedStyles();
   const rate = localStorage.getItem("ttsSpeed");
   const handleSpeak = () => {
     cancel();
-    console.log(rate);
     speak({ text, rate });
   };
 
