@@ -20,8 +20,9 @@ const QuestionForm = ({ item }) => {
   const fetchQuestions = async () => {
     try {
       const questions = await getQuestions(item);
-      if (questions.length > 0) {
-        const question = questions[0];
+      const question = questions[0];
+      console.log(questions)
+      if ( question.section_id == item.section_id) {
         setExistingQuestion(question);
         setQuestionText(question.question_text);
         setQuestionType(question.question_type);
@@ -47,7 +48,7 @@ const QuestionForm = ({ item }) => {
 
   useEffect(() => {
     fetchQuestions();
-  }, []);
+  }, [item]);
 
   const handleQuestionTextChange = (e) => {
     setQuestionText(e.target.value);
@@ -82,7 +83,6 @@ const QuestionForm = ({ item }) => {
   const handleAnswerChange = (e) => {
     setAnswer(e.target.value);
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();

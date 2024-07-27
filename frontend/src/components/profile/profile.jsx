@@ -32,19 +32,6 @@ const Profile = () => {
 
   const menuItemClass = `block w-full text-left px-4 py-2 ${textColor} hover:${backgroundColor} hover:${textColor} transition duration-150 ease-in-out`;
 
-  const sampleQuestions = [
-    {
-      id: 1,
-      text: 'What is the capital of France?',
-      type: 'multiple-choice',
-      choices: ['Paris', 'London', 'Berlin', 'Madrid'],
-    },
-    {
-      id: 2,
-      text: 'Explain the theory of relativity.',
-      type: 'essay',
-    },
-  ];
   useEffect(() => {
     const fetchUserProfile = async () => {
       const token = localStorage.getItem("token");
@@ -72,9 +59,6 @@ const Profile = () => {
       {username ? (
         <>
           <Link to="/instructor" className="text-lg font-bold mr-4">
-            Instructor
-          </Link>
-          <Link to="/userquestions" state = {{sampleQuestions}} className="text-lg font-bold mr-4">
             Instructor
           </Link>
           <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
