@@ -6,11 +6,8 @@ import QuestionForm from "../components/instructor/questions/questionsforms";
 import UserQuestion from "../components/instructor/questions/userQuestions";
 import CommentsSection from "../components/comments/commentSection";
 import InstructorMenu from "../components/instructor/instructorMenu";
-import CurriculumCoursesPage from "../components/instructor/curriculum/CurriculumCoursePage";
 import CourseDetailsPage from "../pages/Course/CourseDetails";
 import EnrolledCoursesPage from "../pages/Course/EnrolledCoursePage";
-import CoursePage from "../pages/Course/AccessCourse";
-import CourseEditPage from "../components/instructor/curriculum/EditCourse";
 import UserSettings from "../components/profile/userSettings";
 const LoggedinRoutes = [
   {
@@ -34,10 +31,6 @@ const LoggedinRoutes = [
     element: <QuestionForm />,
   },
   {
-    path: "/userquestions",
-    element: <UserQuestion />,
-  },
-  {
     path: "/userSettings",
     element: <UserSettings />,
   },
@@ -48,25 +41,15 @@ const LoggedinRoutes = [
   {
     path: "/instructor",
     element: <InstructorMenu />,
-    children: [
-      {
-        path: "courses",
-        element: <CurriculumCoursesPage />,
-      },
-      {
-        path: "course/:courseId",
-        element: <CourseEditPage />,
-      },
-    ],
   },
-  {
-    path: "/Courses/:courseId",
-    element: <CourseDetailsPage />,
-  },
-  {
-    path: "/AccessedCourses/:courseId",
-    element: <CoursePage />,
-  },
+{
+  path: "/Courses/:courseId",
+  element: <CourseDetailsPage />,
+},
+{
+  path: "/Courses/:courseId/content", 
+  element: <UserQuestion />,
+},
   {
     path: "/EnrolledCourses",
     element: <EnrolledCoursesPage />,
