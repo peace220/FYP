@@ -6,7 +6,7 @@ import {
   deleteCourse as deleteCourseApi,
 } from "../../../API/curriculumApi";
 import { useThemedStyles } from "../../../hooks/ThemeContrast";
-import ThemedButton from "../../Theme/ThemeButton";
+
 const CurriculumCoursesPage = () => {
   const { textColor } = useThemedStyles();
   const [courses, setCourses] = useState([]);
@@ -42,6 +42,7 @@ const CurriculumCoursesPage = () => {
     );
     setCourses(updatedCourses);
   };
+  
   const deleteCourse = async (courseId) => {
     await deleteCourseApi(courseId);
     getCourses();

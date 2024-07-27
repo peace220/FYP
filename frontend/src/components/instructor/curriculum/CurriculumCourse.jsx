@@ -4,12 +4,12 @@ import {
   updateCourses as updateCourseApi,
   fetchSections,
   createSection,
+  deleteSection as deleteSectionApi,
   publishCourse as publishCourseApi,
 } from "../../../API/curriculumApi";
 import ThemedButton from "../../Theme/ThemeButton";
 
 const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
-
   const [sections, setSections] = useState(course.sections || []);
   const [showButton, setShowButton] = useState(false);
   const [course_name, setCourse_name] = useState(course.course_name);
@@ -21,7 +21,14 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
 
   const getSections = async () => {
     const sectionData = await fetchSections(course.id);
-    setSections(sectionData);
+    let sectionCounter = 0;
+    let maxSectionId = 0;
+    const rearrangedData = sectionData.map((section) => {
+      sectionCounter++;
+      maxSectionId = Math.max(maxSectionId, section.section_id);
+      return { ...section, arranged_id: sectionCounter };
+    });
+    setSections(rearrangedData);
   };
 
   const addSection = async () => {
@@ -42,7 +49,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
         description: "",
       };
       await createSection(newSection);
-      setSections([...sections, newSection]);
+      getSections();
     }
   };
 
@@ -50,12 +57,13 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     const updatedSections = sections.map((section) =>
       section.section_id === section_id ? updatedSection : section
     );
+    getSections();
     setSections(updatedSections);
   };
 
-  const deleteSection = (id) => {
-    const updatedSections = sections.filter((section) => section.id !== id);
-    setSections(updatedSections);
+  const deleteSection = async (id) => {
+    await deleteSectionApi(course.id, id);
+    getSections();
   };
 
   const saveCourse = async () => {

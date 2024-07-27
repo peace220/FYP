@@ -108,10 +108,13 @@ const updateSection = (req, res) => {
 };
 
 const deleteSection = (req, res) => {
-  const { id } = req.params;
-  const sql = "DELETE FROM Sections WHERE section_id = ? && course_id = ?";
-  db.query(sql, [id], (err, result) => {
-    if (err) throw err;
+  const { section_id, course_id } = req.body;
+  const sql =
+    "UPDATE Sections SET status = 'disable' WHERE section_id = ? && course_id = ?";
+  db.query(sql, [section_id, course_id], (err, result) => {
+    if (err) {
+      console.log(err);
+    }
     res.send(result);
   });
 };
@@ -229,30 +232,38 @@ const uploadVideo = (req, res) => {
   );
 };
 
-const uploadTranscript = async (req,res)=>{
+const uploadTranscript = async (req, res) => {
   if (!req.file) {
-    return res.status(400).json({ success: false, message: 'No file uploaded' });
+    return res
+      .status(400)
+      .json({ success: false, message: "No file uploaded" });
   }
 
   const { videoId } = req.body;
   const filePath = req.file.path;
 
   try {
-    const transcriptContent = await fs.readFile(filePath, 'utf8');
+    const transcriptContent = await fs.readFile(filePath, "utf8");
 
     const [result] = await pool.execute(
-      'INSERT INTO transcripts (video_id, transcript) VALUES (?, ?)',
+      "INSERT INTO transcripts (video_id, transcript) VALUES (?, ?)",
       [videoId, transcriptContent]
     );
 
     await fs.unlink(filePath);
 
-    res.json({ success: true, message: 'Transcript uploaded and stored successfully', id: result.insertId });
+    res.json({
+      success: true,
+      message: "Transcript uploaded and stored successfully",
+      id: result.insertId,
+    });
   } catch (error) {
-    console.error('Error processing transcript:', error);
-    res.status(500).json({ success: false, message: 'Error processing transcript' });
+    console.error("Error processing transcript:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Error processing transcript" });
   }
-}
+};
 
 const insertQuiz = (req, res) => {
   const { quiz_id, course_id, section_id, order_num, title, description } =
@@ -338,7 +349,7 @@ const insertQuestions = async (req, res) => {
             return new Promise((resolve, reject) => {
               db.query(
                 "INSERT INTO Options (question_id, option_text, is_correct, status) VALUES (?, ?, ?, ?)",
-                [questionId, option.text, option.is_correct, "active"],
+                [questionId, option.option_text, option.is_correct, "active"],
                 (err) => {
                   if (err) reject(err);
                   else resolve();
@@ -422,8 +433,8 @@ const insertQuestions = async (req, res) => {
 const getQuestions = (req, res) => {
   const { quiz_id, course_id, section_id } = req.query;
   db.query(
-    "SELECT q.* FROM Questions q JOIN Quiz qz ON q.Quiz_id = qz.Quiz_id WHERE qz.Quiz_id = ? AND qz.course_id = ? AND qz.section_id = ?",
-    [quiz_id, course_id, section_id],
+    "SELECT q.* FROM Questions q JOIN Quiz qz ON q.Quiz_id = qz.Quiz_id WHERE qz.Quiz_id = ? AND qz.course_id = ? AND qz.section_id = ? AND q.section_id = ?",
+    [quiz_id, course_id, section_id, section_id],
     (err, questions) => {
       if (err) {
         console.error(err);

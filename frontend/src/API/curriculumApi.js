@@ -8,13 +8,6 @@ export const fetchCourses = async () => {
   return response.data;
 };
 
-export const fetchSelectedCourseDetails = async (courseId) => {
-  const response = await axios.get(`${apiBaseUrl}/courses/${courseId}`, {
-    headers: { "x-access-token": localStorage.getItem("token") },
-  });
-  return response.data;
-};
-
 export const createCourse = async (course) => {
   await axios.post(
     `${apiBaseUrl}/courses`,
@@ -78,9 +71,10 @@ export const updateSection = async (section) => {
   });
 };
 
-export const deleteSection = async (id) => {
-  const response = await axios.delete(`${apiBaseUrl}/section`, {
-    data: { id: id },
+export const deleteSection = async (course_id,section_id) => {
+  const response = await axios.put(`${apiBaseUrl}/section/update`, {
+    course_id: course_id,
+    section_id: section_id,
   });
   return response.data;
 };
@@ -167,8 +161,8 @@ export const fetchVideos = async (item) => {
   return response.data;
 };
 
-
 export const createQuestion = async (questionData) => {
+  console.log(questionData)
   const response = await axios.post(`${apiBaseUrl}/questions`, {
     quiz_id: questionData.quiz_id,
     course_id: questionData.course_id,
@@ -194,14 +188,14 @@ export const getQuestions = async (questionData) => {
 
 export const updateQuestions = async (questionData) => {
   const response = await axios.put(`${apiBaseUrl}/question`, {
-      quiz_id: questionData.quiz_id,
-      section_id: questionData.section_id,
-      course_id: questionData.course_id,
-      question_id: questionData.question_id,
-      answer: questionData.answer,
-      options: questionData.options,
-      question_text: questionData.question_text,
-      question_type: questionData.question_type,
+    quiz_id: questionData.quiz_id,
+    section_id: questionData.section_id,
+    course_id: questionData.course_id,
+    question_id: questionData.question_id,
+    answer: questionData.answer,
+    options: questionData.options,
+    question_text: questionData.question_text,
+    question_type: questionData.question_type,
   });
   return response.data;
 };

@@ -10,7 +10,7 @@ import {
 } from "../../../API/curriculumApi";
 import { useThemedStyles } from "../../../hooks/ThemeContrast";
 const CurriculumSection = ({ section, updateSection, deleteSection }) => {
-  const { backgroundColor, textColor, cardBackground } = useThemedStyles();
+  const {textColor } = useThemedStyles();
   const [items, setItems] = useState(section.items || []);
   const [title, setTitle] = useState(section.title);
   const [isSectionConfirmed, setIsSectionConfirmed] = useState(!!section.title);
@@ -20,8 +20,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   const [lectureCount, setLectureCount] = useState("");
   const [quizCount, setQuizCount] = useState("");
 
-  const getSections = async () => {
-    
+  const getItems = async () => {
     const ItemsData = await fetchItems(section.course_id, section.section_id);
     let lectureCounter = 0;
     let quizCounter = 0;
@@ -57,10 +56,10 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
       };
       if (type === "lecture") {
         await createLecture(newItem);
-        getSections();
+        getItems();
       } else if (type === "quiz") {
         await createQuiz(newItem);
-        getSections();
+        getItems();
       }
     } else {
       const newItem = {
@@ -74,10 +73,10 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
       };
       if (type === "lecture") {
         await createLecture(newItem);
-        getSections();
+        getItems();
       } else if (type === "quiz") {
         await createQuiz(newItem);
-        getSections();
+        getItems();
       }
     }
   };
@@ -89,14 +88,13 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
     setItems(updatedItems);
   };
 
-  const deleteItem = (itemId, itemSectionId, itemCourseId, itemType) => {
-    console.log(itemSectionId)
+  const deleteItem = async (itemId, itemSectionId, itemCourseId, itemType) => {
     if (itemType === "lecture") {
-      deleteLecture(itemId,itemSectionId,itemCourseId);
-      getSections()
+      await deleteLecture(itemId,itemSectionId,itemCourseId);
+      getItems()
     } else if (itemType === "quiz") {
-      deleteQuiz(itemId,itemSectionId,itemCourseId);
-      getSections()
+      await deleteQuiz(itemId,itemSectionId,itemCourseId);
+      getItems()
     }
   };
 
@@ -117,7 +115,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
   };
 
   useEffect(() => {
-    getSections();
+    getItems();
   }, []);
 
   return (
@@ -128,7 +126,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
         onMouseLeave={handleMouseLeave}
       >
         <h2 className={`font-bold text-lg mb-2 ${textColor}}`}>
-          Section {section.section_id}: {section.title}
+          Section {section.arranged_id}: {section.title}
         </h2>
         {showButton && isEditing == false && (
           <div>

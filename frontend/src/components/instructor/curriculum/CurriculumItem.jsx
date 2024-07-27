@@ -150,15 +150,6 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
                   className="w-full px-3 py-2 border rounded"
                 />
               </div>
-              {/* {video && (
-                <div className="mt-2">
-                  <p>Video: {video.name}</p>
-                  <video width="320" height="240" controls>
-                    <source src={`http://localhost:5000/${video.path}`} type="video/mp4" />
-                    Your browser does not support the video tag.
-                  </video>
-                </div>
-              )} */}
 
               <div className="mb-2">
                 <label htmlFor="transcript" className="block font-medium text-gray-700">
