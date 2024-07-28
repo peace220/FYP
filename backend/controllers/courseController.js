@@ -112,9 +112,9 @@ const checkEnrollmentStatus = (req, res) => {
         return res.status(500).send("Error fetching enrolled courses");
       }
       if (results.length === 0) {
-        return res.status(200).json(false); 
+        return res.status(200).json(false);
       } else {
-        return res.status(200).json(true); 
+        return res.status(200).json(true);
       }
     });
   } catch (error) {
@@ -122,12 +122,10 @@ const checkEnrollmentStatus = (req, res) => {
   }
 };
 
-
-
 const getSelectedCoruseSections = (req, res) => {
   const courseId = req.params.courseId;
   const query = `
-  SELECT 
+SELECT 
     s.section_id, 
     s.title AS section_title, 
     s.description AS section_description,
@@ -145,15 +143,17 @@ const getSelectedCoruseSections = (req, res) => {
     o.options_id,
     o.option_text,
     o.is_correct,
-    v.path AS video_path
-  FROM sections s
-  LEFT JOIN lectures l ON s.course_id = l.course_id AND s.section_id = l.section_id
-  LEFT JOIN Quiz q ON s.course_id = q.course_id AND s.section_id = q.section_id
-  LEFT JOIN Questions ques ON q.Quiz_id = ques.Quiz_id AND q.course_id = ques.course_id AND q.section_id = ques.section_id
-  LEFT JOIN Options o ON ques.question_id = o.question_id
-  LEFT JOIN videos v ON l.lecture_id = v.lecture_id AND l.course_id = v.course_id AND l.section_id = v.section_id
-  WHERE s.course_id = ?
-  ORDER BY s.section_id, l.order_num, q.order_num, ques.question_id, o.options_id
+    v.path AS video_path,
+    ea.answer_text
+FROM sections s
+LEFT JOIN lectures l ON s.course_id = l.course_id AND s.section_id = l.section_id
+LEFT JOIN Quiz q ON s.course_id = q.course_id AND s.section_id = q.section_id
+LEFT JOIN Questions ques ON q.Quiz_id = ques.Quiz_id AND q.course_id = ques.course_id AND q.section_id = ques.section_id
+LEFT JOIN Options o ON ques.question_id = o.question_id
+LEFT JOIN essayanswers ea ON ques.question_id = ea.question_id
+LEFT JOIN videos v ON l.lecture_id = v.lecture_id AND l.course_id = v.course_id AND l.section_id = v.section_id
+WHERE s.course_id = ?
+ORDER BY s.section_id, l.order_num, q.order_num, ques.question_id, o.options_id
 `;
 
   db.query(query, [courseId], (err, results) => {
@@ -176,8 +176,7 @@ const getSelectedCoruseSections = (req, res) => {
           section_id: row.section_id,
           title: row.section_title,
           description: row.section_description,
-          lectures: [],
-          quizzes: [],
+          contents:[]
         };
         sections.push(currentSection);
       }
@@ -192,8 +191,9 @@ const getSelectedCoruseSections = (req, res) => {
           description: row.lecture_description,
           order_num: row.lecture_order,
           video_path: row.video_path,
+          itemType: "lecture"
         };
-        currentSection.lectures.push(currentLecture);
+        currentSection.contents.push(currentLecture);
       }
 
       if (
@@ -205,9 +205,10 @@ const getSelectedCoruseSections = (req, res) => {
           title: row.quiz_title,
           description: row.quiz_description,
           order_num: row.quiz_order,
+          itemType: "quiz",
           questions: [],
         };
-        currentSection.quizzes.push(currentQuiz);
+        currentSection.contents.push(currentQuiz);
       }
 
       if (
@@ -218,6 +219,7 @@ const getSelectedCoruseSections = (req, res) => {
           question_id: row.question_id,
           question_type: row.question_type,
           question_text: row.question_text,
+          answer_text: row.answer_text,
           options: [],
         };
         currentQuiz.questions.push(currentQuestion);
@@ -236,6 +238,72 @@ const getSelectedCoruseSections = (req, res) => {
   });
 };
 
+const storeUserAnswer = (req, res) => {
+  const userId = req.userId;
+  const { question_id, selected_option_id, answer_text, questionType } =
+    req.body;
+  let insertSql;
+  let values;
+
+  if (questionType === "multiple_choice") {
+    insertSql = `
+        INSERT INTO multiplechoiceanswers (user_id, question_id, selected_option_id) 
+        VALUES (?, ?, ?)
+      `;
+    values = [userId, question_id, selected_option_id];
+  } else {
+    insertSql = `
+        INSERT INTO essayanswers (user_id, question_id, answer_text) 
+        VALUES (?, ?, ?)
+      `;
+    values = [userId, question_id, answer_text];
+  }
+
+  db.query(insertSql, values, (err, result) => {
+    if (err) {
+      return res.status(500).send("Error storing user answer");
+    }
+    res.json({ message: "User answer stored successfully" });
+  });
+};
+
+const getPreviousAnswers = (req, res) => {
+  const userId = req.userId;
+  const courseId = req.params.courseId;
+
+  const sql = `
+    SELECT 
+      q.question_id,
+      q.question_type,
+      COALESCE(mca.selected_option_id, ea.answer_text) AS answer,
+      o.is_correct
+    FROM Questions q
+    LEFT JOIN Quiz qz ON q.Quiz_id = qz.Quiz_id
+    LEFT JOIN MultipleChoiceAnswers mca ON q.question_id = mca.question_id AND mca.user_id = ?
+    LEFT JOIN EssayAnswers ea ON q.question_id = ea.question_id AND ea.user_id = ?
+    LEFT JOIN Options o ON mca.selected_option_id = o.options_id
+    WHERE qz.course_id = ?
+  `;
+
+  db.query(sql, [userId, userId, courseId], (err, results) => {
+    if (err) {
+      console.error("Error fetching previous answers:", err);
+      return res.status(500).json({ error: "Error fetching previous answers" });
+    }
+
+    const answers = {};
+    results.forEach((row) => {
+      answers[row.question_id] = {
+        type: row.question_type,
+        answer: row.answer,
+        isCorrect: row.is_correct
+      };
+    });
+
+    res.json(answers);
+  });
+};
+
 module.exports = {
   selectCourse,
   getCourses,
@@ -245,4 +313,6 @@ module.exports = {
   getPublicCourses,
   getSelectedCoruseSections,
   checkEnrollmentStatus,
+  storeUserAnswer,
+  getPreviousAnswers,
 };

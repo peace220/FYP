@@ -5,7 +5,7 @@ import {
   uploadVideo,
   updateLecture,
   updateQuiz,
-  uploadTranscript
+  uploadTranscript,
 } from "../../../API/curriculumApi";
 
 const CurriculumItem = ({ item, updateItem, deleteItem }) => {
@@ -26,14 +26,15 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
 
   const saveItem = async () => {
     const ItemData = { ...item, title, description };
-    updateItem(item.id, ItemData);
-    setIsTitleConfirmed(true);
-    setIsEditing(false);
+
     if (ItemData.type === "lecture") {
       await updateLecture(ItemData);
     } else if (ItemData.type === "quiz") {
       await updateQuiz(ItemData);
     }
+    updateItem(item.id, ItemData);
+    setIsTitleConfirmed(true);
+    setIsEditing(false);
   };
 
   const handleMouseEnter = () => {
@@ -74,8 +75,10 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
         onMouseLeave={handleMouseLeave}
       >
         <p className="font-semibold p-2">
-          {item.type === "lecture" ? `Lecture ${item.arranged_id}` : `Quiz ${item.arranged_id}`}:{" "}
-          {` ${item.title}`}
+          {item.type === "lecture"
+            ? `Lecture ${item.arranged_id}`
+            : `Quiz ${item.arranged_id}`}
+          :{` ${item.title}`}
         </p>
 
         {showButton && isEditing === false && (
@@ -111,7 +114,10 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
             />
           </div>
           <div className="mb-2">
-            <label htmlFor="description" className="block font-medium text-gray-700">
+            <label
+              htmlFor="description"
+              className="block font-medium text-gray-700"
+            >
               Description:
             </label>
             <input
@@ -135,11 +141,14 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
       ) : (
         <>
           {item.type === "quiz" ? (
-            <QuestionForm item = {item} />
+            <QuestionForm item={item} />
           ) : (
             <div>
               <div className="mb-2">
-                <label htmlFor="video" className="block font-medium text-gray-700">
+                <label
+                  htmlFor="video"
+                  className="block font-medium text-gray-700"
+                >
                   Video:
                 </label>
                 <input
@@ -152,7 +161,10 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
               </div>
 
               <div className="mb-2">
-                <label htmlFor="transcript" className="block font-medium text-gray-700">
+                <label
+                  htmlFor="transcript"
+                  className="block font-medium text-gray-700"
+                >
                   Transcript:
                 </label>
                 <input

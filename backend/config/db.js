@@ -146,19 +146,30 @@ CREATE TABLE IF NOT EXISTS Options (
       if (err) throw err;
     });
 
-    const createUsersAnswersTableQuery = `
-    CREATE TABLE IF NOT EXISTS UsersAnswers (
-      userAnswer_id Int AUTO_INCREMENT primary key,
-      user_id INT NOT NULL,
-      question_id INT,
-      selected_option_id INT,
-      answer_text TEXT,
-      status varchar(50),
-      FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE,
-      FOREIGN KEY (question_id) REFERENCES Questions(question_id) ON DELETE CASCADE,
-      FOREIGN KEY (selected_option_id) REFERENCES Options(options_id) ON DELETE CASCADE
-    )`;
-    db.query(createUsersAnswersTableQuery, (err, result) => {
+    const createUsersMultipleChoiceAnswersTableQuery = `
+CREATE TABLE IF NOT EXISTS MultipleChoiceAnswers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  question_id INT NOT NULL,
+  selected_option_id INT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES Users(id),
+  FOREIGN KEY (question_id) REFERENCES Questions(question_id),
+  FOREIGN KEY (selected_option_id) REFERENCES Options(options_id)
+);`;
+    db.query(createUsersMultipleChoiceAnswersTableQuery, (err, result) => {
+      if (err) throw err;
+    });
+
+    const createUsersEssayAnswersTableQuery = `
+CREATE TABLE IF NOT EXISTS EssayAnswers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  question_id INT NOT NULL,
+  answer_text TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES Users(id),
+  FOREIGN KEY (question_id) REFERENCES Questions(question_id)
+)`;
+    db.query(createUsersEssayAnswersTableQuery, (err, result) => {
       if (err) throw err;
     });
 

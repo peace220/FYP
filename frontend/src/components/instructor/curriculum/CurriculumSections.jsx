@@ -98,10 +98,10 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
     }
   };
 
-  const saveSection = () => {
+  const saveSection = async () => {
     const sectionData = { ...section, title, description };
+    await updateSectionApi(sectionData);
     updateSection(section.section_id, sectionData);
-    updateSectionApi(sectionData);
     setIsSectionConfirmed(true);
     setIsEditing(false);
   };

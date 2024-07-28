@@ -41,30 +41,31 @@ const CurriculumCoursesPage = () => {
       course.id === courseId ? updatedCourse : course
     );
     setCourses(updatedCourses);
+    getCourses();
   };
-  
+
   const deleteCourse = async (courseId) => {
     await deleteCourseApi(courseId);
     getCourses();
   };
   return (
-      <div className="container mx-auto p-4 ">
-        <h1 className={`text-2xl font-bold mb-4 ${textColor}`}>Curriculum</h1>
-        {courses.map((course) => (
-          <CurriculumCourse
-            key={course.id}
-            course={course}
-            updateCourse={updateCourse}
-            deleteCourse={deleteCourse}
-          />
-        ))}
-        <button
-          onClick={addCourse}
-          className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-        >
-          + Course
-        </button>
-      </div>
+    <div className="container mx-auto p-4 ">
+      <h1 className={`text-2xl font-bold mb-4 ${textColor}`}>Curriculum</h1>
+      {courses.map((course) => (
+        <CurriculumCourse
+          key={course.id}
+          course={course}
+          updateCourse={updateCourse}
+          deleteCourse={deleteCourse}
+        />
+      ))}
+      <button
+        onClick={addCourse}
+        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
+      >
+        + Course
+      </button>
+    </div>
   );
 };
 export default CurriculumCoursesPage;

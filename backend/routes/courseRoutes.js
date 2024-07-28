@@ -8,6 +8,8 @@ const {
   getPublicCourses,
   getSelectedCoruseSections,
   checkEnrollmentStatus,
+  storeUserAnswer,
+  getPreviousAnswers,
 } = require("../controllers/courseController");
 const verifyToken = require("../middleware/authMiddleware");
 const router = express.Router();
@@ -20,4 +22,6 @@ router.get("/enrolledCourse", verifyToken, getEnrolledCourses);
 router.get("/courses/:courseId", getSelectedCourseDetails);
 router.get("/courses/:courseId/sections", getSelectedCoruseSections);
 router.get("/checkEnrollmentStatus/:courseId", verifyToken, checkEnrollmentStatus);
+router.post("/storeUserAnswer", verifyToken, storeUserAnswer);
+router.get("/previousAnswers/:courseId", verifyToken, getPreviousAnswers);
 module.exports = router;

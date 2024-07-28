@@ -433,8 +433,8 @@ const insertQuestions = async (req, res) => {
 const getQuestions = (req, res) => {
   const { quiz_id, course_id, section_id } = req.query;
   db.query(
-    "SELECT q.* FROM Questions q JOIN Quiz qz ON q.Quiz_id = qz.Quiz_id WHERE qz.Quiz_id = ? AND qz.course_id = ? AND qz.section_id = ? AND q.section_id = ?",
-    [quiz_id, course_id, section_id, section_id],
+    "SELECT q.* FROM Questions q JOIN Quiz qz ON q.Quiz_id = qz.Quiz_id WHERE qz.Quiz_id = ? AND qz.course_id = ? AND q.course_id = ? AND qz.section_id = ? AND q.section_id = ?",
+    [quiz_id, course_id, course_id, section_id, section_id],
     (err, questions) => {
       if (err) {
         console.error(err);

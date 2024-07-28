@@ -57,8 +57,8 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
     const updatedSections = sections.map((section) =>
       section.section_id === section_id ? updatedSection : section
     );
-    getSections();
     setSections(updatedSections);
+    getSections();
   };
 
   const deleteSection = async (id) => {
@@ -68,10 +68,10 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
 
   const saveCourse = async () => {
     const courseData = { ...course, course_name, description };
+    await updateCourseApi(courseData);
     updateCourse(course.id, courseData);
     setIsCourseConfirmed(true);
     setIsEditing(false);
-    await updateCourseApi(courseData);
   };
 
   const publishCourse = async () => {

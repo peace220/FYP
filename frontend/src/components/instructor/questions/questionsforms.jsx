@@ -9,20 +9,23 @@ const QuestionForm = ({ item }) => {
   const [questionText, setQuestionText] = useState("");
   const [questionType, setQuestionType] = useState("multiple_choice");
   const [options, setOptions] = useState([
-    { option_text: "", is_correct: false },
-    { option_text: "", is_correct: false },
-    { option_text: "", is_correct: false },
-    { option_text: "", is_correct: false },
+    { id: 1, option_text: "", is_correct: false },
+    { id: 2, option_text: "", is_correct: false },
+    { id: 3, option_text: "", is_correct: false },
+    { id: 4, option_text: "", is_correct: false },
   ]);
   const [answer, setAnswer] = useState("");
   const [existingQuestion, setExistingQuestion] = useState(null);
+  const [validationError, setValidationError] = useState("");
 
   const fetchQuestions = async () => {
     try {
       const questions = await getQuestions(item);
+      if (questions.length <= 0) {
+        return;
+      }
       const question = questions[0];
-      console.log(questions)
-      if ( question.section_id == item.section_id) {
+      if (question.section_id == item.section_id) {
         setExistingQuestion(question);
         setQuestionText(question.question_text);
         setQuestionType(question.question_type);
@@ -31,10 +34,10 @@ const QuestionForm = ({ item }) => {
             question.options.length === 4
               ? question.options
               : [
-                  { option_text: "", is_correct: false },
-                  { option_text: "", is_correct: false },
-                  { option_text: "", is_correct: false },
-                  { option_text: "", is_correct: false },
+                  { id: 1, option_text: "", is_correct: false },
+                  { id: 2, option_text: "", is_correct: false },
+                  { id: 3, option_text: "", is_correct: false },
+                  { id: 4, option_text: "", is_correct: false },
                 ]
           );
         } else {
@@ -86,6 +89,16 @@ const QuestionForm = ({ item }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (questionType === "multiple_choice") {
+      const hasCorrectOption = options.some((option) => option.is_correct);
+      if (!hasCorrectOption) {
+        setValidationError("Please select at least one correct option.");
+        return;
+      }
+    }
+
+    setValidationError("");
+
     const questionData = {
       question_text: questionText,
       question_type: questionType,
@@ -197,6 +210,9 @@ const QuestionForm = ({ item }) => {
               rows="4"
             />
           </div>
+        )}
+        {validationError && (
+          <div className="text-red-500 mb-4">{validationError}</div>
         )}
         <div className="text-right">
           <button

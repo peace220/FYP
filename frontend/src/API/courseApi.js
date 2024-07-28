@@ -65,3 +65,38 @@ export const fetchEnrolledCoursesContent = async (courseId) => {
     throw error;
   }
 };
+
+export const storeUserAnswer = async (answers) => {
+  try {
+    await axios.post(
+      `${apiBaseUrl}/storeUserAnswer`,
+      {
+        question_id: answers.question_id,
+        selected_option_id: answers.option_id,
+        answer_text: answers.answer,
+        questionType: answers.questionType,
+      },
+      {
+        headers: { "x-access-token": localStorage.getItem("token") },
+      }
+    );
+  } catch (error) {
+    console.error("Error posting data", error);
+    throw error;
+  }
+};
+
+export const fetchPreviousAnswers = async (courseId) => {
+  try {
+    const response = await axios.get(
+      `${apiBaseUrl}/previousAnswers/${courseId}`,
+      {
+        headers: { "x-access-token": localStorage.getItem("token") },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching enrolled courses:", error);
+    throw error;
+  }
+};
