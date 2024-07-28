@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import Layout from "../Layout/Layout1";
-import axios from "axios";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
 import { useNavigate } from "react-router-dom";
+import { signUpApi } from "../../API/profileApi";
 const Signup = () => {
   const navigate = useNavigate();
   const { backgroundColor, textColor, cardBackground } = useThemedStyles();
@@ -10,9 +10,14 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const handleSignup = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!username || !email || !password) {
+      setErrorMessage("Please fill in all fields.");
+      return;
+    }
     if (!emailRegex.test(email)) {
       setEmailError("Please enter a valid email address.");
       return;
@@ -21,27 +26,28 @@ const Signup = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
-        username,
-        email,
-        password,
-      });
-      alert("Signup successful")
+      await signUpApi(username, email, password);
       navigate("/join/login");
     } catch (error) {
-      alert("Error during signup");
+      setErrorMessage("Error during signup. Please try again.");
     }
   };
 
   return (
     <Layout>
-      <div className={`flex justify-center items-center h-full ${backgroundColor}`}>
-        <div className={`w-full max-w-md ${cardBackground} shadow-md rounded px-8 pt-6 pb-8 mb-4`}>
+      <div
+        className={`flex justify-center items-center h-full ${backgroundColor}`}
+      >
+        <div
+          className={`w-full max-w-md ${cardBackground} shadow-md rounded px-8 pt-6 pb-8 mb-4`}
+        >
           <h2 className={`text-center text-2xl mb-4 ${textColor}`}>Sign Up</h2>
-          <form
-            className=""
-            onSubmit={(e) => e.preventDefault()}
-          >
+          {errorMessage && (
+            <p className={`text-red-500 text-xs italic mb-2 ${textColor}`}>
+              {errorMessage}
+            </p>
+          )}
+          <form className="" onSubmit={(e) => e.preventDefault()}>
             <div className="mb-4">
               <label
                 className={`block ${textColor} text-sm font-bold mb-2`}
@@ -74,7 +80,9 @@ const Signup = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
               {emailError && (
-                <p className={`text-red-500 text-xs italic ${textColor}`}>{emailError}</p>
+                <p className={`text-red-500 text-xs italic ${textColor}`}>
+                  {emailError}
+                </p>
               )}
             </div>
             <div className="mb-6">
