@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Comment from "./comments";
-import axios from "axios";
 import { useParams } from "react-router-dom";
-
+import { postComments, getComments as getCommentsApi } from "../../API/commentsApi";
 const CommentsSection = () => {
   const courseId = useParams();
   const [comments, setComments] = useState([]);
@@ -14,27 +13,15 @@ const CommentsSection = () => {
 
   const handlePostComment = async () => {
     if (commentText.trim()) {
-      const response = await axios.post(
-        "http://localhost:5000/api/comments/postComments",
-        {
-          text: commentText,
-          parent_id: null,
-          course_id: courseId.courseId,
-        },
-        {
-          headers: { "x-access-token": localStorage.getItem("token") },
-        }
-      );
+      await postComments(commentText, null, courseId.courseId);
       fetchComments();
       setCommentText("");
     }
   };
 
   const fetchComments = async () => {
-    const response = await axios.get(
-      `http://localhost:5000/api/comments/comments/${courseId.courseId}`
-    );
-    setComments(response.data);
+    const getComments = await getCommentsApi(courseId.courseId);
+    setComments(getComments);
   };
 
   const renderComments = (commentsList) => {

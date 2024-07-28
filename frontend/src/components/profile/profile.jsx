@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGlobe, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { getProfile } from "../../API/profileApi.js";
 import { useThemedStyles } from "../../hooks/ThemeContrast.jsx";
 const Profile = () => {
   const { backgroundColor, textColor, headerColor, cardBackground } = useThemedStyles();
@@ -37,13 +37,8 @@ const Profile = () => {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const response = await axios.get(
-            "http://localhost:5000/api/auth/profile",
-            {
-              headers: { "x-access-token": token },
-            }
-          );
-          setUsername(response.data.username);
+          const profileinfo = await getProfile();
+          setUsername(profileinfo.username);
         } catch (error) {
           console.error("Error fetching user profile", error);
         }

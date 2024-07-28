@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
-
+import { postComments } from "../../API/commentsApi";
 const Comment = ({ comment, refetchComments }) => {
   const { courseId } = useParams();
   const [replyText, setReplyText] = useState("");
@@ -9,17 +8,7 @@ const Comment = ({ comment, refetchComments }) => {
 
   const handleReply = async () => {
     if (replyText.trim()) {
-      const response = await axios.post(
-        "http://localhost:5000/api/comments/postComments",
-        {
-          text: replyText,
-          parent_id: comment.id,
-          course_id: courseId,
-        },
-        {
-          headers: { "x-access-token": localStorage.getItem("token") },
-        }
-      );
+      await postComments(replyText, comment.id, courseId);
       refetchComments();
       setReplyText("");
       setShowReplyBox(false);
