@@ -25,7 +25,7 @@ const CourseDetailsPage = () => {
 
   const handleEnroll = async () => {
     try {
-      const response = await enrollCourse(courseId);
+      await enrollCourse(courseId);
       setIsEnrolled(true);
     } catch (error) {
       console.error(error);

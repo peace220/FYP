@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faHome,
-  faCompass,
-  faBook,
-} from "@fortawesome/free-solid-svg-icons";
+import { faHome, faCompass, faBook } from "@fortawesome/free-solid-svg-icons";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import "../../styles/sidebar.css";
 import { Link } from "react-router-dom";
@@ -21,14 +17,14 @@ const Sidebar = () => {
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faCompass} className="text-xl" />
           <Link to="/Courses" className="hover:text-gray-400">
-          Discover
+            Discover
           </Link>
         </li>
         <li className="flex items-center space-x-2 py-2">
           <FontAwesomeIcon icon={faBook} className="text-xl" />
-          <a href="/EnrolledCourses" className="hover:text-gray-400">
+          <Link to="/EnrolledCourses" className="hover:text-gray-400">
             My Courses
-          </a>
+          </Link>
         </li>
       </ul>
     </div>
