@@ -40,7 +40,8 @@ const UserQuestion = () => {
   const [previousAnswers, setPreviousAnswers] = useState({});
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [liveTranscript, setLiveTranscript] = useState("");
-  
+  const [validationError, setValidationError] = useState("");
+
   useEffect(() => {
     fetchContent();
   }, []);
@@ -77,17 +78,15 @@ const UserQuestion = () => {
     setLiveTranscript("");
   };
 
-  const handleAnswerChange = (questionId, questionType, value) => {
+  const handleAnswerChange = (questionType, value) => {
     if (questionType === "multiple_choice") {
       setAnswers({
-        question_id: questionId,
         option_id: value,
         answer: "",
         questionType: questionType,
       });
     } else if (questionType === "essay") {
       setAnswers({
-        question_id: questionId,
         option_id: "",
         answer: value,
         questionType: questionType,
@@ -95,20 +94,13 @@ const UserQuestion = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e, questionId) => {
     e.preventDefault();
-    console.log(answers)
-    // storeUserAnswer(answers);
+    const updatedAnswers = { question_id: questionId, ...answers };
+    storeUserAnswer(updatedAnswers);
     alert("Answers submitted successfully!");
   };
 
-
-  useEffect(() => {
-    if (!browserSupportsSpeechRecognition) {
-      alert("Your browser does not support speech recognition.");
-    }
-  }, [browserSupportsSpeechRecognition]);
-  
   const startListening = () => {
     resetTranscript();
     setLiveTranscript("");
@@ -119,7 +111,7 @@ const UserQuestion = () => {
     SpeechRecognition.stopListening();
     const newAnswer = currentAnswer + " " + transcript;
     setCurrentAnswer(newAnswer);
-    handleAnswerChange("", "essay", newAnswer);
+    handleAnswerChange("essay", newAnswer);
     setLiveTranscript("");
   };
 
@@ -199,7 +191,6 @@ const UserQuestion = () => {
                           value={choice.options_id}
                           onChange={(e) =>
                             handleAnswerChange(
-                              question.question_id,
                               question.question_type,
                               e.target.value
                             )
@@ -233,41 +224,47 @@ const UserQuestion = () => {
                   </div>
                 ) : (
                   <div className="mb-4">
-                    <div className="mb-2">
-                      <button
-                        onClick={startListening}
-                        disabled={listening || hasAnswered}
-                        className={`px-4 py-2 rounded mr-2 ${
-                          listening || hasAnswered
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-blue-500 hover:bg-blue-600 text-white"
-                        }`}
-                      >
-                        Start Listening
-                      </button>
-                      <button
-                        onClick={stopListening}
-                        disabled={!listening || hasAnswered}
-                        className={`px-4 py-2 rounded mr-2 ${
-                          !listening || hasAnswered
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-red-500 hover:bg-red-600 text-white"
-                        }`}
-                      >
-                        Stop Listening
-                      </button>
-                      <button
-                        onClick={handleResetTranscript}
-                        disabled={hasAnswered}
-                        className={`px-4 py-2 rounded ${
-                          hasAnswered
-                            ? "bg-gray-300 cursor-not-allowed"
-                            : "bg-yellow-500 hover:bg-yellow-600 text-white"
-                        }`}
-                      >
-                        Reset
-                      </button>
-                    </div>
+                    {browserSupportsSpeechRecognition === true ? (
+                      <div className="mb-2">
+                        <button
+                          onClick={startListening}
+                          disabled={listening || hasAnswered}
+                          className={`px-4 py-2 rounded mr-2 ${
+                            listening || hasAnswered
+                              ? "bg-gray-300 cursor-not-allowed"
+                              : "bg-blue-500 hover:bg-blue-600 text-white"
+                          }`}
+                        >
+                          Start Listening
+                        </button>
+                        <button
+                          onClick={stopListening}
+                          disabled={!listening || hasAnswered}
+                          className={`px-4 py-2 rounded mr-2 ${
+                            !listening || hasAnswered
+                              ? "bg-gray-300 cursor-not-allowed"
+                              : "bg-red-500 hover:bg-red-600 text-white"
+                          }`}
+                        >
+                          Stop Listening
+                        </button>
+                        <button
+                          onClick={handleResetTranscript}
+                          disabled={hasAnswered}
+                          className={`px-4 py-2 rounded ${
+                            hasAnswered
+                              ? "bg-gray-300 cursor-not-allowed"
+                              : "bg-yellow-500 hover:bg-yellow-600 text-white"
+                          }`}
+                        >
+                          Reset
+                        </button>
+                      </div>
+                    ) : (
+                      <h3 className={`text-lg ${textColor}`}>
+                        Your browser does not support speech recognition.
+                      </h3>
+                    )}
                     {listening && (
                       <div className="mb-2 p-2 bg-gray-100 rounded">
                         <p className="font-semibold">Live Transcript:</p>
@@ -279,14 +276,15 @@ const UserQuestion = () => {
                       rows="4"
                       onChange={(e) => {
                         handleAnswerChange(
-                          question.question_id,
                           question.question_type,
                           e.target.value
                         );
                         setCurrentAnswer(e.target.value);
                       }}
                       readOnly={hasAnswered}
-                      value={hasAnswered ? previousAnswer.answer : currentAnswer}
+                      value={
+                        hasAnswered ? previousAnswer.answer : currentAnswer
+                      }
                       className={`w-full px-3 py-2 border rounded ${backgroundColor} ${textColor} ${
                         hasAnswered ? "cursor-not-allowed" : ""
                       }`}
@@ -305,7 +303,7 @@ const UserQuestion = () => {
                       <button
                         type="submit"
                         disabled={hasAnswered}
-                        onClick={handleSubmit}
+                        onClick={(e) => handleSubmit(e, question.question_id)}
                         className={`px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors ${
                           hasAnswered ? "opacity-50 cursor-not-allowed" : ""
                         }`}

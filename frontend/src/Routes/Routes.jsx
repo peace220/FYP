@@ -1,6 +1,7 @@
+import React from "react";
+import Home from "../pages/Home";
 import Login from "../pages/Login/Login";
 import Signup from "../pages/Signup/Signup";
-import Home from "../pages/Home";
 import Courses from "../pages/Course/Courses";
 import QuestionForm from "../components/instructor/questions/questionsforms";
 import UserQuestion from "../components/instructor/questions/userQuestions";
@@ -9,6 +10,8 @@ import InstructorMenu from "../components/instructor/instructorMenu";
 import CourseDetailsPage from "../pages/Course/CourseDetails";
 import EnrolledCoursesPage from "../pages/Course/EnrolledCoursePage";
 import UserSettings from "../components/profile/userSettings";
+import ProtectedRoute from "../components/ProtectedRoute";
+
 const LoggedinRoutes = [
   {
     path: "/",
@@ -24,35 +27,68 @@ const LoggedinRoutes = [
   },
   {
     path: "/Courses",
-    element: <Courses />,
+    element: (
+      <ProtectedRoute>
+        <Courses />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/questionform",
-    element: <QuestionForm />,
+    element: (
+      <ProtectedRoute>
+        <QuestionForm />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/userSettings",
-    element: <UserSettings />,
+    element: (
+      <ProtectedRoute>
+        <UserSettings />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/commentSection",
-    element: <CommentsSection />,
+    element: (
+      <ProtectedRoute>
+        <CommentsSection />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/instructor",
-    element: <InstructorMenu />,
+    element: (
+      <ProtectedRoute>
+        <InstructorMenu />
+      </ProtectedRoute>
+    ),
   },
-{
-  path: "/Courses/:courseId",
-  element: <CourseDetailsPage />,
-},
-{
-  path: "/Courses/:courseId/content", 
-  element: <UserQuestion />,
-},
+  {
+    path: "/Courses/:courseId",
+    element: (
+      <ProtectedRoute>
+        <CourseDetailsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/Courses/:courseId/content",
+    element: (
+      <ProtectedRoute>
+        <UserQuestion />
+      </ProtectedRoute>
+    ),
+  },
   {
     path: "/EnrolledCourses",
-    element: <EnrolledCoursesPage />,
+    element: (
+      <ProtectedRoute>
+        <EnrolledCoursesPage />
+      </ProtectedRoute>
+    ),
   },
 ];
+
 export default LoggedinRoutes;
