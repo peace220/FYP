@@ -40,7 +40,7 @@ const UserQuestion = () => {
   const [previousAnswers, setPreviousAnswers] = useState({});
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [liveTranscript, setLiveTranscript] = useState("");
-  const [validationError, setValidationError] = useState("");
+  const [submitNotification, setSubmitNotification] = useState(""); 
 
   useEffect(() => {
     fetchContent();
@@ -94,11 +94,22 @@ const UserQuestion = () => {
     }
   };
 
-  const handleSubmit = (e, questionId) => {
+  const handleSubmit = async (e, questionId) => {
     e.preventDefault();
     const updatedAnswers = { question_id: questionId, ...answers };
-    storeUserAnswer(updatedAnswers);
-    alert("Answers submitted successfully!");
+    try {
+      await storeUserAnswer(updatedAnswers);
+      setSubmitNotification("Answers submitted successfully!");
+      setTimeout(() => {
+        setSubmitNotification(""); 
+      }, 3000); 
+    } catch (error) {
+      console.error("Error submitting answers:", error);
+      setSubmitNotification("Error submitting answers. Please try again.");
+      setTimeout(() => {
+        setSubmitNotification(""); 
+      }, 3000); 
+    }
   };
 
   const startListening = () => {
@@ -283,7 +294,7 @@ const UserQuestion = () => {
                       }}
                       readOnly={hasAnswered}
                       value={
-                        hasAnswered ? previousAnswer.answer : currentAnswer
+                        hasAnswered ? `Original Answer: ${previousAnswer.answer}` : currentAnswer
                       }
                       className={`w-full px-3 py-2 border rounded ${backgroundColor} ${textColor} ${
                         hasAnswered ? "cursor-not-allowed" : ""
@@ -310,6 +321,11 @@ const UserQuestion = () => {
                       >
                         {hasAnswered ? "Already Submitted" : "Submit Answers"}
                       </button>
+                      {submitNotification && (
+                        <p className={`mt-2 text-sm ${textColor}`}>
+                          {submitNotification}
+                        </p>
+                      )}
                     </div>
                   )}
               </div>

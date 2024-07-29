@@ -17,9 +17,33 @@ export const getProfile = async () => {
 };
 
 export const signUpApi = async (username, email, password) => {
-   await axios.post(`${apiBaseUrl}/signup`, {
+  await axios.post(`${apiBaseUrl}/signup`, {
     username,
     email,
     password,
   });
+};
+
+export const updateProfileApi = async (username) => {
+  await axios.put(
+    `${apiBaseUrl}/profileUpdate`,
+    {
+      username,
+    },
+    {
+      headers: { "x-access-token": localStorage.getItem("token") },
+    }
+  );
+};
+
+export const changePasswordApi = async (newPassword) => {
+  await axios.put(
+    `${apiBaseUrl}/changePassword`,
+    {
+      newPassword,
+    },
+    {
+      headers: { "x-access-token": localStorage.getItem("token") },
+    }
+  );
 };

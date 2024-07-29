@@ -56,4 +56,60 @@ const getUserProfile = (req, res) => {
   });
 };
 
-module.exports = { signup, login, getUserProfile };
+const updateUsername = (req, res) => {
+  const userId = req.userId;
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).send("Username is required");
+  }
+  const sql = "Update users SET username  = ?  WHERE id = ?";
+  return new Promise((resolve, reject) => {
+    db.query(sql, [username, userId], (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  })
+  .then((results) => {
+    res.send(results);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send("Error updating username");
+  });
+};
+
+const updatePassword = (req, res) => {
+  const userId = req.userId;
+  const { newPassword } = req.body;
+  if (!newPassword) {
+    return res.status(400).send("New Password is required");
+  }
+  const sql = "Update users SET password  = ?  WHERE id = ?";
+  return new Promise((resolve, reject) => {
+    db.query(sql, [newPassword, userId], (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results);
+      }
+    });
+  })
+  .then((results) => {
+    res.send(results);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send("Error updating password");
+  });
+};
+
+module.exports = {
+  signup,
+  login,
+  getUserProfile,
+  updateUsername,
+  updatePassword,
+};

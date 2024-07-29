@@ -144,13 +144,13 @@ SELECT
     o.option_text,
     o.is_correct,
     v.path AS video_path,
-    ea.answer_text
+    a.answer_text
 FROM sections s
 LEFT JOIN lectures l ON s.course_id = l.course_id AND s.section_id = l.section_id
 LEFT JOIN Quiz q ON s.course_id = q.course_id AND s.section_id = q.section_id
 LEFT JOIN Questions ques ON q.Quiz_id = ques.Quiz_id AND q.course_id = ques.course_id AND q.section_id = ques.section_id
 LEFT JOIN Options o ON ques.question_id = o.question_id
-LEFT JOIN essayanswers ea ON ques.question_id = ea.question_id
+LEFT JOIN answers a ON ques.question_id = a.question_id
 LEFT JOIN videos v ON l.lecture_id = v.lecture_id AND l.course_id = v.course_id AND l.section_id = v.section_id
 WHERE s.course_id = ?
 ORDER BY s.section_id, l.order_num, q.order_num, ques.question_id, o.options_id

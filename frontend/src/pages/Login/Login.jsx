@@ -18,12 +18,12 @@ const Login = () => {
       setErrorMessage("Please fill in all fields.");
       return;
     }
-    if (!emailRegex.test(email)) {
-      setEmailError("Please enter a valid email address.");
-      return;
-    } else {
-      setEmailError(null);
-    }
+    // if (!emailRegex.test(email)) {
+    //   setEmailError("Please enter a valid email address.");
+    //   return;
+    // } else {
+    //   setEmailError(null);
+    // }
 
     try {
       await loginApi(email, password);
