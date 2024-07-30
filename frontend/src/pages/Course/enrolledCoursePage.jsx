@@ -3,7 +3,9 @@ import { fetchEnrolledCourses } from "../../API/courseApi";
 import Layout from "../Layout/Layout1";
 import { useNavigate } from "react-router-dom";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
+import { useTranslation } from "react-i18next";
 const EnrolledCoursesPage = () => {
+  const { t } = useTranslation();
   const { backgroundColor, textColor, cardBackground } = useThemedStyles();
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const navigate = useNavigate();
@@ -21,7 +23,9 @@ const EnrolledCoursesPage = () => {
     if (enrolledCourses.length === 0) {
       return (
         <div className={`text-center ${textColor}`}>
-          <p className="text-xl mb-4">You have not enroll to any courses yet.</p>
+          <p className="text-xl mb-4">
+            {t("courses.enrollCourseNotify")}
+          </p>
         </div>
       );
     }
@@ -43,7 +47,7 @@ const EnrolledCoursesPage = () => {
                 navigate(`/Courses/${course.id}`);
               }}
             >
-              View Course
+              {t("courses.viewCourse")}
             </button>
           </div>
         ))}
@@ -56,7 +60,7 @@ const EnrolledCoursesPage = () => {
       <div className={`min-h-screen ${backgroundColor}`}>
         <div className="container mx-auto p-4">
           <h1 className={`text-3xl font-bold mb-4 ${textColor}`}>
-            Your Enrolled Courses
+            {t("courses.showEnroll")}
           </h1>
           {renderContent()}
         </div>

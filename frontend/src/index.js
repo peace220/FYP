@@ -5,6 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoggedinRoutes from "./Routes/Routes.jsx";
 import "./styles/index.css";
 import { ThemeProvider } from "./components/Theme/ThemeContext.jsx";
+import "./components/Cards/LanguageModel/i18n.js"
 const router = createBrowserRouter(LoggedinRoutes);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));

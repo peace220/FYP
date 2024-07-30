@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { postComments } from "../../API/commentsApi";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
+import { useTranslation } from "react-i18next";
 const Comment = ({ comment, refetchComments }) => {
+  const {t} = useTranslation();
   const { textColor } = useThemedStyles();
 
   const { courseId } = useParams();
@@ -27,7 +29,7 @@ const Comment = ({ comment, refetchComments }) => {
         onClick={() => setShowReplyBox(!showReplyBox)}
         className="text-blue-500 text-sm mt-2"
       >
-        {showReplyBox ? "Cancel" : "Reply"}
+        {showReplyBox ? t('button.cancel') : t('button.reply')}
       </button>
       {showReplyBox && (
         <div className="mt-2">
@@ -35,13 +37,13 @@ const Comment = ({ comment, refetchComments }) => {
             value={replyText}
             onChange={(e) => setReplyText(e.target.value)}
             className="w-full p-2 border rounded-lg mb-2"
-            placeholder={`Replying to @${comment.username}`}
+            placeholder={`${t('comments.replyComments')} ${comment.username}`}
           ></textarea>
           <button
             onClick={handleReply}
             className={`${textColor} bg-blue-500 text-white px-4 py-2 rounded-lg`}
           >
-            Post Reply
+            {t('comments.postComments')}
           </button>
         </div>
       )}

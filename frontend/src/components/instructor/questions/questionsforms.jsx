@@ -4,8 +4,9 @@ import {
   getQuestions,
   updateQuestions,
 } from "../../../API/curriculumApi";
-
+import { useTranslation } from "react-i18next";
 const QuestionForm = ({ item }) => {
+  const { t } = useTranslation();
   const [questionText, setQuestionText] = useState("");
   const [questionType, setQuestionType] = useState("multiple_choice");
   const [options, setOptions] = useState([
@@ -135,7 +136,7 @@ const QuestionForm = ({ item }) => {
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="questionText"
           >
-            Question Text
+            {t("questions.questionText")}
           </label>
           <input
             type="text"
@@ -143,7 +144,7 @@ const QuestionForm = ({ item }) => {
             value={questionText}
             onChange={handleQuestionTextChange}
             className="w-full px-3 py-2 border rounded"
-            placeholder="Enter the question"
+            placeholder={t("questions.enterQuestion")}
             required
           />
         </div>
@@ -152,7 +153,7 @@ const QuestionForm = ({ item }) => {
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="questionType"
           >
-            Question Type
+            {t("questions.questionType")}
           </label>
           <select
             id="questionType"
@@ -160,14 +161,16 @@ const QuestionForm = ({ item }) => {
             onChange={handleQuestionTypeChange}
             className="w-full px-3 py-2 border rounded"
           >
-            <option value="multiple_choice">Multiple Choice</option>
-            <option value="essay">Essay</option>
+            <option value="multiple_choice">
+              {t("questions.multipleChoice")}
+            </option>
+            <option value="essay">{t("questions.essay")}</option>
           </select>
         </div>
         {questionType === "multiple_choice" && (
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
-              Options
+              {t("questions.options")}
             </label>
             {options.map((option, index) => (
               <div key={index} className="flex items-center mb-2">
@@ -177,7 +180,7 @@ const QuestionForm = ({ item }) => {
                   onChange={(e) => handleOptionChange(index, e)}
                   className="w-full px-3 py-2 border rounded mr-2"
                   required
-                  placeholder={`Option ${index + 1}`}
+                  placeholder={`${t("questions.option")} ${index + 1}`}
                 />
                 <label className="inline-flex items-center">
                   <input
@@ -187,7 +190,7 @@ const QuestionForm = ({ item }) => {
                     onChange={() => handleCorrectAnswerChange(index)}
                     className="form-radio text-indigo-600"
                   />
-                  <span className="ml-2">Correct</span>
+                  <span className="ml-2">{t("questions.correctAnswer")}</span>
                 </label>
               </div>
             ))}
@@ -199,14 +202,14 @@ const QuestionForm = ({ item }) => {
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="answer"
             >
-              Essay Answer
+              {t("questions.essayAnswer")}
             </label>
             <textarea
               id="answer"
               value={answer}
               onChange={handleAnswerChange}
               className="w-full px-3 py-2 border rounded"
-              placeholder="Enter the essay answer"
+              placeholder={t("questions.enterEssayAnswer")}
               rows="4"
             />
           </div>
@@ -219,7 +222,9 @@ const QuestionForm = ({ item }) => {
             type="submit"
             className="px-4 py-2 bg-green-500 text-white rounded"
           >
-            {existingQuestion ? "Update Question" : "Submit Question"}
+            {existingQuestion
+              ? t("questions.updateQuestion")
+              : t("questions.submitQuestion")}
           </button>
         </div>
       </form>

@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
 import { updateProfileApi, changePasswordApi } from "../../API/profileApi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 function ProfileSettings() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { textColor, cardBackground } = useThemedStyles();
   const [activeTab, setActiveTab] = useState("profile");
@@ -56,7 +58,7 @@ function ProfileSettings() {
         className={`w-full max-w-md ${cardBackground} shadow-md rounded px-8 pt-6 pb-8 mb-4`}
       >
         <h2 className={`text-center text-2xl mb-4 ${textColor}`}>
-          User Settings
+          {t("userSetting")}
         </h2>
         <div className="flex mb-4">
           <button
@@ -67,7 +69,7 @@ function ProfileSettings() {
             }`}
             onClick={() => handleTabChange("profile")}
           >
-            Profile
+            {t("profile")}
           </button>
           <button
             className={`ml-2 px-4 py-2 rounded-md ${
@@ -77,7 +79,7 @@ function ProfileSettings() {
             }`}
             onClick={() => handleTabChange("password")}
           >
-            Password
+            {t("password.password")}
           </button>
         </div>
 
@@ -94,13 +96,13 @@ function ProfileSettings() {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="username"
               >
-                Username
+                {t("username")}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                 id="username"
                 type="text"
-                placeholder="Username"
+                placeholder={t("username")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -111,7 +113,7 @@ function ProfileSettings() {
                 type="button"
                 onClick={handleProfileUpdate}
               >
-                Update Profile
+                {t("updateProfile")}
               </button>
             </div>
           </form>
@@ -124,13 +126,13 @@ function ProfileSettings() {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="newPassword"
               >
-                New Password
+                {t("password.newPassword")}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                 id="newPassword"
                 type="password"
-                placeholder="New Password"
+                placeholder={t("password.newPassword")}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
@@ -140,13 +142,13 @@ function ProfileSettings() {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="confirmPassword"
               >
-                Confirm Password
+               {t("password.currentPassword")}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm Password"
+                placeholder={t("password.currentPassword")}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
@@ -157,7 +159,7 @@ function ProfileSettings() {
                 type="button"
                 onClick={handlePasswordChange}
               >
-                Change Password
+               {t("password.changePassword")}
               </button>
             </div>
           </form>

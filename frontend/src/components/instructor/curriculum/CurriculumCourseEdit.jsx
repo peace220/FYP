@@ -9,8 +9,9 @@ import {
 } from "../../../API/curriculumApi";
 import { useThemedStyles } from "../../../hooks/ThemeContrast";
 import ThemedButton from "../../Theme/ThemeButton";
-
+import { useTranslation } from "react-i18next";
 const CurriculumCourseEdit = () => {
+  const { t } = useTranslation();
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
   const [showComments, setShowComments] = useState(false);
@@ -44,26 +45,26 @@ const CurriculumCourseEdit = () => {
   };
 
   if (!course)
-    return <div className={`text-center ${textColor}`}>Loading...</div>;
+    return <div className={`text-center ${textColor}`}>{t("curriculum.loading")}...</div>;
 
   return (
     <div className={`container mx-auto p-4`}>
       <div className="flex justify-between items-center mb-4">
-        <h1 className={`text-2xl font-bold ${textColor}`}>Edit Course</h1>
+        <h1 className={`text-2xl font-bold ${textColor}`}>{t("curriculum.editCourse")}</h1>
         <div>
           <ThemedButton
             type="secondary"
             onClick={handleGoBack}
             className="px-4 py-2 rounded mr-2"
           >
-            Back to Courses
+            {t("curriculum.backtoCourse")}
           </ThemedButton>
           <ThemedButton
             type="primary"
             onClick={toggleComments}
             className="px-4 py-2 rounded"
           >
-            {showComments ? "Hide Comments" : "Show Comments"}
+            {showComments ? t("curriculum.hideComments") : t("curriculum.showComments")}
           </ThemedButton>
         </div>
       </div>

@@ -9,8 +9,10 @@ import {
   updateSection as updateSectionApi,
 } from "../../../API/curriculumApi";
 import { useThemedStyles } from "../../../hooks/ThemeContrast";
+import { useTranslation } from "react-i18next";
 const CurriculumSection = ({ section, updateSection, deleteSection }) => {
-  const {textColor } = useThemedStyles();
+  const { t } = useTranslation();
+  const { textColor } = useThemedStyles();
   const [items, setItems] = useState(section.items || []);
   const [title, setTitle] = useState(section.title);
   const [isSectionConfirmed, setIsSectionConfirmed] = useState(!!section.title);
@@ -39,7 +41,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
       return item;
     });
     setLectureCount(maxLectureId);
-    setQuizCount(maxQuizId)
+    setQuizCount(maxQuizId);
     setItems(rearrangedData);
   };
 
@@ -90,11 +92,11 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
 
   const deleteItem = async (itemId, itemSectionId, itemCourseId, itemType) => {
     if (itemType === "lecture") {
-      await deleteLecture(itemId,itemSectionId,itemCourseId);
-      getItems()
+      await deleteLecture(itemId, itemSectionId, itemCourseId);
+      getItems();
     } else if (itemType === "quiz") {
-      await deleteQuiz(itemId,itemSectionId,itemCourseId);
-      getItems()
+      await deleteQuiz(itemId, itemSectionId, itemCourseId);
+      getItems();
     }
   };
 
@@ -126,7 +128,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
         onMouseLeave={handleMouseLeave}
       >
         <h2 className={`font-bold text-lg mb-2 ${textColor}}`}>
-          Section {section.arranged_id}: {section.title}
+          {t("curriculum.section")} {section.arranged_id}: {section.title}
         </h2>
         {showButton && isEditing == false && (
           <div>
@@ -134,13 +136,13 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
               onClick={() => setIsEditing(true)}
               className="bg-green-500 text-white px-2 py-1 rounded mr-3"
             >
-              Edit
+              {t("button.edit")}
             </button>
             <button
               onClick={() => deleteSection(section.section_id)}
               className="bg-red-500 text-white px-2 py-1 rounded"
             >
-              Delete
+              {t("button.delete")}
             </button>
           </div>
         )}
@@ -166,7 +168,7 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
               onClick={saveSection}
               className="bg-green-500 text-white px-2 py-1 rounded"
             >
-              Confirm
+              {t("button.confirm")}
             </button>
           </div>
         </>
@@ -179,20 +181,22 @@ const CurriculumSection = ({ section, updateSection, deleteSection }) => {
                 key={index}
                 item={item}
                 updateItem={updateItem}
-                deleteItem={(itemId) => deleteItem(itemId,item.section_id,item.course_id, item.type)}
+                deleteItem={(itemId) =>
+                  deleteItem(itemId, item.section_id, item.course_id, item.type)
+                }
               />
             ))}
           <button
             onClick={() => addItem("lecture")}
             className="bg-blue-500 text-white px-2 py-1 rounded mt-2 mr-2"
           >
-            + Lecture
+            + {t("curriculum.lecture")}
           </button>
           <button
             onClick={() => addItem("quiz")}
             className="bg-green-500 text-white px-2 py-1 rounded mt-2"
           >
-            + Quiz
+            + {t("curriculum.quiz")}
           </button>
         </div>
       )}

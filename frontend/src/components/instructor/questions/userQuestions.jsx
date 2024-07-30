@@ -19,8 +19,10 @@ import { useParams } from "react-router-dom";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { useTranslation } from "react-i18next";
 
 const UserQuestion = () => {
+  const { t } = useTranslation();
   const { courseId } = useParams();
   const {
     transcript,
@@ -61,7 +63,7 @@ const UserQuestion = () => {
   const fetchTranscriptContent = async (videoId) => {
     try {
       const transcriptContent = await fetchTranscript(videoId);
-      console.log(transcriptContent)
+      console.log(transcriptContent);
       setLectureTranscript(transcriptContent);
     } catch (error) {
       console.error("Error fetching transcript:", error);
@@ -69,7 +71,7 @@ const UserQuestion = () => {
   };
 
   useEffect(() => {
-    console.log(selectedContent)
+    console.log(selectedContent);
     if (
       selectedContent &&
       selectedContent.itemType === "lecture" &&
@@ -161,7 +163,7 @@ const UserQuestion = () => {
     if (!selectedContent) {
       return (
         <p className={`text-center ${textColor}`}>
-          Select a lecture or quiz from the sidebar to view content.
+          {t("questions.selectQuestions")}
         </p>
       );
     }
@@ -175,14 +177,16 @@ const UserQuestion = () => {
           <p className={`${textColor}`}>{selectedContent.description}</p>
           {selectedContent && (
             <div className="mt-2">
-              <p>Video: {selectedContent.title}</p>
+              <p>
+                {t("curriculum.video")}: {selectedContent.title}
+              </p>
               {selectedContent.video_path && (
                 <video width="1024" height="576" controls>
                   <source
                     src={`http://localhost:5000/${selectedContent.video_path}`}
                     type="video/mp4"
                   />
-                  Your browser does not support the video tag.
+                  {t("notSupportTag")}
                 </video>
               )}
             </div>
@@ -190,7 +194,7 @@ const UserQuestion = () => {
           {lectureTranscript && (
             <div className="mt-4">
               <h4 className={`text-lg font-bold mb-2 ${textColor}`}>
-                Transcript
+                {t("curriculum.transcript")}
               </h4>
               <div
                 className={`${cardBackground} p-4 rounded-lg shadow max-h-60 overflow-y-auto`}
@@ -210,7 +214,6 @@ const UserQuestion = () => {
         {selectedContent.questions &&
           selectedContent.questions.map((question) => {
             const previousAnswer = previousAnswers[question.question_id];
-            console.log(previousAnswer.answer);
             const hasAnswered = !!previousAnswer.answer;
             return (
               <div
@@ -283,7 +286,7 @@ const UserQuestion = () => {
                               : "bg-blue-500 hover:bg-blue-600 text-white"
                           }`}
                         >
-                          Start Listening
+                          {t("TTS.startListening")}
                         </button>
                         <button
                           onClick={stopListening}
@@ -294,7 +297,7 @@ const UserQuestion = () => {
                               : "bg-red-500 hover:bg-red-600 text-white"
                           }`}
                         >
-                          Stop Listening
+                          {t("TTS.stopListening")}
                         </button>
                         <button
                           onClick={handleResetTranscript}
@@ -305,17 +308,19 @@ const UserQuestion = () => {
                               : "bg-yellow-500 hover:bg-yellow-600 text-white"
                           }`}
                         >
-                          Reset
+                          {t("TTS.reset")}
                         </button>
                       </div>
                     ) : (
                       <h3 className={`text-lg ${textColor}`}>
-                        Your browser does not support speech recognition.
+                        {t("TTS.STTsupport")}
                       </h3>
                     )}
                     {listening && (
                       <div className="mb-2 p-2 bg-gray-100 rounded">
-                        <p className="font-semibold">Live Transcript:</p>
+                        <p className="font-semibold">
+                          {t("TTS.liveTranscript")}:
+                        </p>
                         <p>{liveTranscript}</p>
                       </div>
                     )}
@@ -332,7 +337,9 @@ const UserQuestion = () => {
                       readOnly={hasAnswered}
                       value={
                         hasAnswered
-                          ? `Original Answer: ${previousAnswer.answer}`
+                          ? `${t("questions.originalAnswer")}: ${
+                              previousAnswer.answer
+                            }`
                           : currentAnswer
                       }
                       className={`w-full px-3 py-2 border rounded ${backgroundColor} ${textColor} ${
@@ -340,11 +347,15 @@ const UserQuestion = () => {
                       }`}
                       placeholder={
                         hasAnswered
-                          ? "Your previous answer"
-                          : "Write your answer here or use speech-to-text"
+                          ? t("questions.previousAnswer")
+                          : t("questions.writeAnswer")
                       }
                     ></textarea>
-                    {hasAnswered && <p>Answer is: {question.answer_text}</p>}
+                    {hasAnswered && (
+                      <p>
+                        {t("questions.Answeris")}: {question.answer_text}
+                      </p>
+                    )}
                   </div>
                 )}
                 {selectedContent.questions &&
@@ -358,7 +369,9 @@ const UserQuestion = () => {
                           hasAnswered ? "opacity-50 cursor-not-allowed" : ""
                         }`}
                       >
-                        {hasAnswered ? "Already Submitted" : "Submit Answers"}
+                        {hasAnswered
+                          ? t("questions.alreadySubmit")
+                          : t("questions.submitAnswer")}
                       </button>
                       {submitNotification && (
                         <p className={`mt-2 text-sm ${textColor}`}>
@@ -379,7 +392,7 @@ const UserQuestion = () => {
       <div className={`flex min-h-screen ${backgroundColor} shadow-lg`}>
         <div className={`w-1/4 p-4 overflow-y-auto ${backgroundColor}`}>
           <h2 className={`text-2xl font-bold mb-6 ${textColor}`}>
-            Course Sections
+            {t("questions.courseSection")}
           </h2>
           {courseContent.map((section) => (
             <div key={section.section_id} className="mb-4">

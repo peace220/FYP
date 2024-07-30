@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { fetchCourses, createCourse } from "../../../API/curriculumApi";
 import { useThemedStyles } from "../../../hooks/ThemeContrast";
 import { useNavigate } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 const CurriculumCoursesPage = () => {
+  const { t } = useTranslation();
   const { textColor } = useThemedStyles();
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
@@ -33,11 +34,13 @@ const CurriculumCoursesPage = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className={`text-2xl font-bold mb-4 ${textColor}`}>Select a Course to Edit</h1>
+      <h1 className={`text-2xl font-bold mb-4 ${textColor}`}>
+        {t("curriculum.selectCourse")}
+      </h1>
       <ul className="space-y-2">
         {courses.map((course) => (
-          <li 
-            key={course.id} 
+          <li
+            key={course.id}
             className="bg-white border border-gray-300 rounded p-3 cursor-pointer hover:bg-gray-100"
             onClick={() => handleCourseSelect(course.id)}
           >
@@ -49,7 +52,7 @@ const CurriculumCoursesPage = () => {
         onClick={addCourse}
         className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
       >
-        + New Course
+        + {t("curriculum.newCourse")}
       </button>
     </div>
   );

@@ -8,8 +8,9 @@ import {
   publishCourse as publishCourseApi,
 } from "../../../API/curriculumApi";
 import ThemedButton from "../../Theme/ThemeButton";
-
+import { useTranslation } from "react-i18next";
 const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
+  const { t } = useTranslation();
   const [sections, setSections] = useState(course.sections || []);
   const [showButton, setShowButton] = useState(false);
   const [course_name, setCourse_name] = useState(course.course_name);
@@ -103,7 +104,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
         onMouseLeave={handleMouseLeave}
       >
         <h2 className={`text-xl font-bold`}>
-          Course: {` ${course.course_name}`}
+          {t("curriculum.course")}: {` ${course.course_name}`}
         </h2>
         {showButton && isEditing == false && (
           <div>
@@ -112,14 +113,14 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
               onClick={() => setIsEditing(true)}
               className="bg-green-500 text-white px-2 py-1 rounded mr-3"
             >
-              Edit
+              {t("button.edit")}
             </ThemedButton>
             <ThemedButton
               type="delete"
               onClick={() => deleteCourse(course.id)}
               className="bg-red-500 text-white px-2 py-1 rounded"
             >
-              Delete
+              {t("button.delete")}
             </ThemedButton>
           </div>
         )}
@@ -146,14 +147,14 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
               onClick={cancelEdit}
               className="bg-red-500 text-white px-2 py-1 rounded"
             >
-              Cancel
+              {t("button.delete")}
             </ThemedButton>
             <ThemedButton
               type="store"
               onClick={saveCourse}
               className="bg-green-500 text-white px-2 py-1 rounded"
             >
-              Confirm
+              {t("button.confirm")}
             </ThemedButton>
           </div>
         </>
@@ -172,7 +173,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
             onClick={addSection}
             className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
           >
-            + Section
+            + {t("curriculum.section")}
           </ThemedButton>
         </div>
       )}
@@ -181,7 +182,7 @@ const CurriculumCourse = ({ course, updateCourse, deleteCourse }) => {
         onClick={publishCourse}
         className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
       >
-        publish
+        {t("button.publish")}
       </ThemedButton>
     </div>
   );

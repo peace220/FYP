@@ -3,8 +3,9 @@ import Layout from "../Layout/Layout1";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
 import { useNavigate } from "react-router-dom";
 import { loginApi } from "../../API/profileApi";
-
+import { useTranslation } from "react-i18next";
 const Login = () => {
+  const {t} = useTranslation();
   const { backgroundColor, textColor, cardBackground } = useThemedStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,12 +19,12 @@ const Login = () => {
       setErrorMessage("Please fill in all fields.");
       return;
     }
-    // if (!emailRegex.test(email)) {
-    //   setEmailError("Please enter a valid email address.");
-    //   return;
-    // } else {
-    //   setEmailError(null);
-    // }
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    } else {
+      setEmailError(null);
+    }
 
     try {
       await loginApi(email, password);
@@ -41,7 +42,7 @@ const Login = () => {
         <div
           className={`w-full max-w-md ${cardBackground} shadow-md rounded px-8 pt-6 pb-8 mb-4`}
         >
-          <h2 className={`text-center text-2xl mb-4 ${textColor}`}>Log In</h2>
+          <h2 className={`text-center text-2xl mb-4 ${textColor}`}>{t('login')}</h2>
           {errorMessage && (
             <p className={`text-red-500 text-xs italic mb-2 ${textColor}`}>
               {errorMessage}
@@ -53,13 +54,13 @@ const Login = () => {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="email"
               >
-                Email
+                {t('email')}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder={t('email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -74,7 +75,7 @@ const Login = () => {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="password"
               >
-                Password
+                {t('password.password')}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3  mb-3 leading-tight focus:outline-none focus:shadow-outline`}
@@ -91,7 +92,7 @@ const Login = () => {
                 type="button"
                 onClick={handleLogin}
               >
-                Log In
+                {t('login')}
               </button>
             </div>
           </form>

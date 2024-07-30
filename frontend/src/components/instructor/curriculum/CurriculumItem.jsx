@@ -5,10 +5,11 @@ import {
   uploadVideo,
   updateLecture,
   updateQuiz,
-  updateVideo
+  updateVideo,
 } from "../../../API/curriculumApi";
-
+import { useTranslation } from "react-i18next";
 const CurriculumItem = ({ item, updateItem, deleteItem }) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState(item.title);
   const [isTitleConfirmed, setIsTitleConfirmed] = useState(!!item.title);
   const [showButton, setShowButton] = useState(false);
@@ -86,8 +87,8 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
       >
         <p className="font-semibold p-2">
           {item.type === "lecture"
-            ? `Lecture ${item.arranged_id}`
-            : `Quiz ${item.arranged_id}`}
+            ? `${t("curriculum.lecture")} ${item.arranged_id}`
+            : `${t("curriculum.quiz")} ${item.arranged_id}`}
           :{` ${item.title}`}
         </p>
 
@@ -97,13 +98,13 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
               onClick={() => setIsEditing(true)}
               className="bg-green-500 text-white px-2 py-1 rounded mr-3"
             >
-              Edit
+              {t("button.edit")}
             </button>
             <button
               onClick={() => deleteItem(item.id)}
               className="bg-red-500 text-white px-2 py-1 rounded"
             >
-              Delete
+              {t("button.delete")}
             </button>
           </div>
         )}
@@ -112,7 +113,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
         <>
           <div className="mb-2">
             <label htmlFor="title" className="block font-medium text-gray-700">
-              Title:
+              {t("title")}:
             </label>
             <input
               type="text"
@@ -128,7 +129,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
               htmlFor="description"
               className="block font-medium text-gray-700"
             >
-              Description:
+              {t("description")}:
             </label>
             <input
               type="text"
@@ -144,7 +145,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
               onClick={saveItem}
               className="bg-green-500 text-white px-2 py-1 rounded"
             >
-              Confirm
+              {t("button.confirm")}
             </button>
           </div>
         </>
@@ -159,7 +160,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
                   htmlFor="video"
                   className="block font-medium text-gray-700"
                 >
-                  Video:
+                  {t("curriculum.video")}:
                 </label>
                 <input
                   type="file"
@@ -175,7 +176,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
                   htmlFor="transcript"
                   className="block font-medium text-gray-700"
                 >
-                  Transcript:
+                  {t("curriculum.transcript")}:
                 </label>
                 <input
                   type="file"
@@ -189,7 +190,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
                 onClick={handleUpload}
                 className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
               >
-                {videoExists ? "Update" : "Upload"}
+                {videoExists ? t("button.update") : t("button.upload")}
               </button>
             </div>
           )}

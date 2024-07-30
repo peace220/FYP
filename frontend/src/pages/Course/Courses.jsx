@@ -3,8 +3,9 @@ import { fetchAllCourses } from "../../API/courseApi";
 import Layout from "../Layout/Layout1";
 import { useNavigate } from "react-router-dom";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
-
+import { useTranslation } from "react-i18next";
 const SelectCoursePage = () => {
+  const {t} = useTranslation();
   const { backgroundColor, textColor, cardBackground } = useThemedStyles();
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ const SelectCoursePage = () => {
     if (courses.length === 0) {
       return (
         <div className={`text-center ${textColor}`}>
-          <p className="text-xl mb-4">No courses available at the moment.</p>
+          <p className="text-xl mb-4"> {t("courses.courseNotify")}</p>
         </div>
       );
     }
@@ -47,7 +48,7 @@ const SelectCoursePage = () => {
               className="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-4"
               onClick={() => navigate(`/Courses/${course.id}`)}
             >
-              Select
+              {t("button.select")}
             </button>
           </div>
         ))}
@@ -60,7 +61,7 @@ const SelectCoursePage = () => {
       <div className={`min-h-screen ${backgroundColor}`}>
         <div className="container mx-auto p-4">
           <h1 className={`text-3xl font-bold mb-4 ${textColor}`}>
-            Select a Course
+            {t("courses.selectCourse")}
           </h1>
           {renderContent()}
         </div>

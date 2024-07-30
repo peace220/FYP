@@ -3,6 +3,7 @@ import Comment from "./comments";
 import { useParams } from "react-router-dom";
 import { postComments, getComments as getCommentsApi } from "../../API/commentsApi";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
+import { t } from "i18next";
 
 const CommentsSection = () => {
   const { textColor } = useThemedStyles();
@@ -36,7 +37,7 @@ const CommentsSection = () => {
             {comment.replies.map((reply) => (
               <div key={reply.id} className="border-l-2 border-gray-200 pl-4 my-2">
                 <p >
-                  <strong >{reply.username}</strong> replying to @{comment.username}: {reply.text}
+                  <strong >{reply.username}</strong> {t("comments.replyComments")}{comment.username}: {reply.text}
                 </p>
               </div>
             ))}
@@ -48,19 +49,19 @@ const CommentsSection = () => {
 
   return (
     <div>
-      <h2 className={`text-xl font-bold mb-4 ${textColor}`}>Comments</h2>
+      <h2 className={`text-xl font-bold mb-4 ${textColor}`}>{t("comments.comments")}</h2>
       <div className="mb-4">
         <textarea
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           className="w-full p-2 border rounded-lg mb-2"
-          placeholder="Write a comment..."
+          placeholder={t("comments.writeComments")}
         ></textarea>
         <button
           onClick={handlePostComment}
           className="bg-blue-500 text-white px-4 py-2 rounded-lg"
         >
-          Post Comment
+          {t("comments.postComments")}
         </button>
       </div>
       <div className="overflow-y-auto max-h-60" style={{ maxHeight: "600px" }}> 

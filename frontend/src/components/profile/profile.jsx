@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGlobe, faUser, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGlobe,
+  faUser,
+  faSignOutAlt,
+} from "@fortawesome/free-solid-svg-icons";
 import LanguageModal from "../Cards/LanguageModel/LanguageModal.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { getProfile } from "../../API/profileApi.js";
 import { useThemedStyles } from "../../hooks/ThemeContrast.jsx";
+import { useTranslation } from "react-i18next";
 const Profile = () => {
-  const { backgroundColor, textColor, headerColor, cardBackground } = useThemedStyles();
+  const { t } = useTranslation();
+  const { backgroundColor, textColor, headerColor, cardBackground } =
+    useThemedStyles();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [username, setUsername] = useState("");
   const [showLanguageSettingsModal, setShowLanguageSettingsModal] =
@@ -50,11 +57,13 @@ const Profile = () => {
   }, []);
 
   return (
-    <div className={`flex items-center w-full ${headerColor} justify-end shadow-lg`}>
+    <div
+      className={`flex items-center w-full ${headerColor} justify-end shadow-lg`}
+    >
       {username ? (
         <>
           <Link to="/instructor/courses" className="text-lg font-bold mr-4">
-            Instructor
+            {t("instructor")}
           </Link>
           <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
             <div className="flex justify-end items-center h-12">
@@ -70,20 +79,18 @@ const Profile = () => {
                   onClick={handleUserSetting}
                 >
                   <FontAwesomeIcon icon={faUser} className="mr-2" />
-                  Edit Profile
+                  {t("editprofile")}
                 </button>
                 <button
-                  className={`${menuItemClass} border-b border-gray-200 flex justify-between items-center`}
+                  className={`${menuItemClass} `}
                   onClick={() => setShowLanguageSettingsModal(true)}
                 >
-                  <span>Language</span>
-                  <span className="flex items-center">
-                    <FontAwesomeIcon icon={faGlobe} className="mr-2" />
-                  </span>
+                  <FontAwesomeIcon icon={faGlobe} className="mr-2" />
+                  {t("language.language")}
                 </button>
                 <button className={menuItemClass} onClick={handleLogOutButton}>
                   <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
-                  Log out
+                  {t("logout")}
                 </button>
               </div>
             )}
@@ -92,10 +99,10 @@ const Profile = () => {
       ) : (
         <div className="flex justify-end items-center h-12">
           <Link to="/join/login" className="text-lg font-bold mr-4">
-            Log in
+            {t("login")}
           </Link>
           <Link to="/join/signup" className="text-lg font-bold mr-4">
-            Sign Up
+            {t("signup")}
           </Link>
         </div>
       )}

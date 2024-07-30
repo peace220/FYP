@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { fetchSelectedCourseDetails, enrollCourse, checkEnrollmentStatus } from "../../API/courseApi";
+import {
+  fetchSelectedCourseDetails,
+  enrollCourse,
+  checkEnrollmentStatus,
+} from "../../API/courseApi";
 import CommentsSection from "../../components/comments/commentSection";
 import Layout from "../Layout/Layout1";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
 import ThemedButton from "../../components/Theme/ThemeButton";
-
+import { useTranslation } from "react-i18next";
 const CourseDetailsPage = () => {
+  const { t } = useTranslation();
   const { backgroundColor, textColor } = useThemedStyles();
   const { courseId } = useParams();
   const navigate = useNavigate();
@@ -51,14 +56,14 @@ const CourseDetailsPage = () => {
                   className="font-bold py-2 px-4 rounded mt-4"
                   onClick={handleAccessContent}
                 >
-                  Access Content
+                  {t("courses.accessContent")}
                 </ThemedButton>
               ) : (
                 <ThemedButton
                   className="font-bold py-2 px-4 rounded mt-4"
                   onClick={handleEnroll}
                 >
-                  Enroll
+                  {t("button.enroll")}
                 </ThemedButton>
               )}
             </>

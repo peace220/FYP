@@ -3,6 +3,7 @@ import Layout from "../Layout/Layout1";
 import { useThemedStyles } from "../../hooks/ThemeContrast";
 import { useNavigate } from "react-router-dom";
 import { signUpApi } from "../../API/profileApi";
+import { useTranslation } from "react-i18next";
 const Signup = () => {
   const navigate = useNavigate();
   const { backgroundColor, textColor, cardBackground } = useThemedStyles();
@@ -11,6 +12,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
+  const {t} = useTranslation();
 
   const handleSignup = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -41,7 +43,7 @@ const Signup = () => {
         <div
           className={`w-full max-w-md ${cardBackground} shadow-md rounded px-8 pt-6 pb-8 mb-4`}
         >
-          <h2 className={`text-center text-2xl mb-4 ${textColor}`}>Sign Up</h2>
+          <h2 className={`text-center text-2xl mb-4 ${textColor}`}>{t('signup')}</h2>
           {errorMessage && (
             <p className={`text-red-500 text-xs italic mb-2 ${textColor}`}>
               {errorMessage}
@@ -53,13 +55,13 @@ const Signup = () => {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="username"
               >
-                Username
+                {t('username')}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline`}
                 id="username"
                 type="text"
-                placeholder="Username"
+                placeholder={t('username')}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -69,13 +71,13 @@ const Signup = () => {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="email"
               >
-                Email
+                {t('email')}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3  leading-tight focus:outline-none focus:shadow-outline`}
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder={t('email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -90,7 +92,7 @@ const Signup = () => {
                 className={`block ${textColor} text-sm font-bold mb-2`}
                 htmlFor="password"
               >
-                Password
+                {t('password.password')}
               </label>
               <input
                 className={`shadow appearance-none border rounded w-full py-2 px-3 mb-3 leading-tight focus:outline-none focus:shadow-outline`}
@@ -107,7 +109,7 @@ const Signup = () => {
                 type="button"
                 onClick={handleSignup}
               >
-                Sign Up
+               {t('signup')}
               </button>
             </div>
           </form>
