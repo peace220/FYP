@@ -86,6 +86,16 @@ export const storeUserAnswer = async (answers) => {
   }
 };
 
+export const fetchTranscript = async (videoId) => {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/transcript/${videoId}`);
+    return response.data.transcript;
+  } catch (error) {
+    console.error("Error fetching transcript:", error);
+    throw error;
+  }
+};
+
 export const fetchPreviousAnswers = async (courseId) => {
   try {
     const response = await axios.get(

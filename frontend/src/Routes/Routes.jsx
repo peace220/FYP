@@ -11,6 +11,8 @@ import CourseDetailsPage from "../pages/Course/CourseDetails";
 import EnrolledCoursesPage from "../pages/Course/EnrolledCoursePage";
 import UserSettings from "../components/profile/userSettings";
 import ProtectedRoute from "../components/ProtectedRoute";
+import CurriculumCoursesPage from "../components/instructor/curriculum/CurriculumCoursePage";
+import CurriculumCourseEdit from "../components/instructor/curriculum/CurriculumCourseEdit";
 
 const LoggedinRoutes = [
   {
@@ -64,6 +66,16 @@ const LoggedinRoutes = [
         <InstructorMenu />
       </ProtectedRoute>
     ),
+    children: [
+      {
+        path: "courses",
+        element: <CurriculumCoursesPage />
+      },
+      {
+        path: "courses/:courseId",
+        element: <CurriculumCourseEdit />
+      },
+    ]
   },
   {
     path: "/Courses/:courseId",

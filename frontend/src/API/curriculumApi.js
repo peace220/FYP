@@ -19,6 +19,13 @@ export const createCourse = async (course) => {
   );
 };
 
+export const fetchCourseById = async (courseId) => {
+  const response = await axios.get(`${apiBaseUrl}/courses/${courseId}`, {
+    headers: { "x-access-token": localStorage.getItem("token") },
+  });
+  return response.data;
+};
+
 export const updateCourses = async (course) => {
   await axios.put(
     `${apiBaseUrl}/courses`,
@@ -71,7 +78,7 @@ export const updateSection = async (section) => {
   });
 };
 
-export const deleteSection = async (course_id,section_id) => {
+export const deleteSection = async (course_id, section_id) => {
   const response = await axios.put(`${apiBaseUrl}/section/update`, {
     course_id: course_id,
     section_id: section_id,
@@ -150,6 +157,20 @@ export const uploadVideo = async (formData) => {
   });
 };
 
+export const updateVideo = async (formData) => {
+  try {
+    const response = await axios.put(`${apiBaseUrl}/uploadVideo`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating video:", error);
+    throw error;
+  }
+};
+
 export const fetchVideos = async (item) => {
   const response = await axios.get(`${apiBaseUrl}/videos`, {
     params: {
@@ -162,7 +183,7 @@ export const fetchVideos = async (item) => {
 };
 
 export const createQuestion = async (questionData) => {
-  console.log(questionData)
+  console.log(questionData);
   const response = await axios.post(`${apiBaseUrl}/questions`, {
     quiz_id: questionData.quiz_id,
     course_id: questionData.course_id,

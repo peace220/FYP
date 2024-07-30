@@ -13,6 +13,7 @@ import {
   fetchEnrolledCoursesContent,
   storeUserAnswer,
   fetchPreviousAnswers,
+  fetchTranscript,
 } from "../../../API/courseApi";
 import { useParams } from "react-router-dom";
 import SpeechRecognition, {
@@ -40,7 +41,8 @@ const UserQuestion = () => {
   const [previousAnswers, setPreviousAnswers] = useState({});
   const [currentAnswer, setCurrentAnswer] = useState("");
   const [liveTranscript, setLiveTranscript] = useState("");
-  const [submitNotification, setSubmitNotification] = useState(""); 
+  const [submitNotification, setSubmitNotification] = useState("");
+  const [lectureTranscript, setLectureTranscript] = useState("");
 
   useEffect(() => {
     fetchContent();
@@ -56,6 +58,26 @@ const UserQuestion = () => {
       console.error("Error fetching course content:", error);
     }
   };
+  const fetchTranscriptContent = async (videoId) => {
+    try {
+      const transcriptContent = await fetchTranscript(videoId);
+      console.log(transcriptContent)
+      setLectureTranscript(transcriptContent);
+    } catch (error) {
+      console.error("Error fetching transcript:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(selectedContent)
+    if (
+      selectedContent &&
+      selectedContent.itemType === "lecture" &&
+      selectedContent.video_id
+    ) {
+      fetchTranscriptContent(selectedContent.video_id);
+    }
+  }, [selectedContent]);
 
   const toggleSection = (sectionId) => {
     setCourseContent((prevContent) =>
@@ -101,14 +123,14 @@ const UserQuestion = () => {
       await storeUserAnswer(updatedAnswers);
       setSubmitNotification("Answers submitted successfully!");
       setTimeout(() => {
-        setSubmitNotification(""); 
-      }, 3000); 
+        setSubmitNotification("");
+      }, 3000);
     } catch (error) {
       console.error("Error submitting answers:", error);
       setSubmitNotification("Error submitting answers. Please try again.");
       setTimeout(() => {
-        setSubmitNotification(""); 
-      }, 3000); 
+        setSubmitNotification("");
+      }, 3000);
     }
   };
 
@@ -165,6 +187,20 @@ const UserQuestion = () => {
               )}
             </div>
           )}
+          {lectureTranscript && (
+            <div className="mt-4">
+              <h4 className={`text-lg font-bold mb-2 ${textColor}`}>
+                Transcript
+              </h4>
+              <div
+                className={`${cardBackground} p-4 rounded-lg shadow max-h-60 overflow-y-auto`}
+              >
+                <pre className={`whitespace-pre-wrap ${textColor}`}>
+                  {lectureTranscript}
+                </pre>
+              </div>
+            </div>
+          )}
         </div>
       );
     }
@@ -174,6 +210,7 @@ const UserQuestion = () => {
         {selectedContent.questions &&
           selectedContent.questions.map((question) => {
             const previousAnswer = previousAnswers[question.question_id];
+            console.log(previousAnswer.answer);
             const hasAnswered = !!previousAnswer.answer;
             return (
               <div
@@ -294,7 +331,9 @@ const UserQuestion = () => {
                       }}
                       readOnly={hasAnswered}
                       value={
-                        hasAnswered ? `Original Answer: ${previousAnswer.answer}` : currentAnswer
+                        hasAnswered
+                          ? `Original Answer: ${previousAnswer.answer}`
+                          : currentAnswer
                       }
                       className={`w-full px-3 py-2 border rounded ${backgroundColor} ${textColor} ${
                         hasAnswered ? "cursor-not-allowed" : ""

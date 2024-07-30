@@ -5,7 +5,7 @@ import {
   uploadVideo,
   updateLecture,
   updateQuiz,
-  uploadTranscript,
+  updateVideo
 } from "../../../API/curriculumApi";
 
 const CurriculumItem = ({ item, updateItem, deleteItem }) => {
@@ -16,11 +16,13 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
   const [description, setDescription] = useState(item.description);
   const [isEditing, setIsEditing] = useState(false);
   const [transcript, setTranscript] = useState(null);
+  const [videoExists, setVideoExists] = useState(false);
 
   const getVideos = async () => {
     const fetchedVideos = await fetchVideos(item);
     if (fetchedVideos.length > 0) {
       setVideo(fetchedVideos[0]);
+      setVideoExists(true);
     }
   };
 
@@ -55,7 +57,15 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
     formData.append("lecture_id", item.id);
     formData.append("section_id", item.section_id);
     formData.append("course_id", item.course_id);
-    await uploadVideo(formData);
+    if (transcript) {
+      formData.append("transcript", transcript);
+    }
+
+    if (videoExists) {
+      await updateVideo(formData);
+    } else {
+      await uploadVideo(formData);
+    }
     getVideos();
   };
 
@@ -179,7 +189,7 @@ const CurriculumItem = ({ item, updateItem, deleteItem }) => {
                 onClick={handleUpload}
                 className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
               >
-                Upload
+                {videoExists ? "Update" : "Upload"}
               </button>
             </div>
           )}

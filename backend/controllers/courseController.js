@@ -144,6 +144,7 @@ SELECT
     o.option_text,
     o.is_correct,
     v.path AS video_path,
+    v.video_id,
     a.answer_text
 FROM sections s
 LEFT JOIN lectures l ON s.course_id = l.course_id AND s.section_id = l.section_id
@@ -176,7 +177,7 @@ ORDER BY s.section_id, l.order_num, q.order_num, ques.question_id, o.options_id
           section_id: row.section_id,
           title: row.section_title,
           description: row.section_description,
-          contents:[]
+          contents: [],
         };
         sections.push(currentSection);
       }
@@ -191,7 +192,8 @@ ORDER BY s.section_id, l.order_num, q.order_num, ques.question_id, o.options_id
           description: row.lecture_description,
           order_num: row.lecture_order,
           video_path: row.video_path,
-          itemType: "lecture"
+          video_id: row.video_id,
+          itemType: "lecture",
         };
         currentSection.contents.push(currentLecture);
       }
@@ -235,6 +237,23 @@ ORDER BY s.section_id, l.order_num, q.order_num, ques.question_id, o.options_id
     });
 
     res.json(sections);
+  });
+};
+const getTranscript = (req, res) => {
+  const videoId = req.params.videoId;
+  const sql = "SELECT transcript FROM Transcript WHERE video_id = ?";
+
+  db.query(sql, [videoId], (err, result) => {
+    if (err) {
+      console.error("Error fetching transcript:", err);
+      return res.status(500).json({ message: "Error fetching transcript" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: "Transcript not found" });
+    }
+
+    res.json({ transcript: result[0].transcript });
   });
 };
 
@@ -296,7 +315,7 @@ const getPreviousAnswers = (req, res) => {
       answers[row.question_id] = {
         type: row.question_type,
         answer: row.answer,
-        isCorrect: row.is_correct
+        isCorrect: row.is_correct,
       };
     });
 
@@ -314,5 +333,6 @@ module.exports = {
   getSelectedCoruseSections,
   checkEnrollmentStatus,
   storeUserAnswer,
+  getTranscript,
   getPreviousAnswers,
 };

@@ -53,7 +53,7 @@ const Profile = () => {
     <div className={`flex items-center w-full ${headerColor} justify-end shadow-lg`}>
       {username ? (
         <>
-          <Link to="/instructor" className="text-lg font-bold mr-4">
+          <Link to="/instructor/courses" className="text-lg font-bold mr-4">
             Instructor
           </Link>
           <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>

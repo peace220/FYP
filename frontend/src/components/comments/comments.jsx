@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { postComments } from "../../API/commentsApi";
+import { useThemedStyles } from "../../hooks/ThemeContrast";
 const Comment = ({ comment, refetchComments }) => {
+  const { textColor } = useThemedStyles();
+
   const { courseId } = useParams();
   const [replyText, setReplyText] = useState("");
   const [showReplyBox, setShowReplyBox] = useState(false);
@@ -17,7 +20,7 @@ const Comment = ({ comment, refetchComments }) => {
 
   return (
     <div className="p-4 border rounded-lg mb-4">
-      <p>
+      <p className={`${textColor}`}>
         <strong>{comment.username}</strong>: {comment.text}
       </p>
       <button
@@ -36,7 +39,7 @@ const Comment = ({ comment, refetchComments }) => {
           ></textarea>
           <button
             onClick={handleReply}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+            className={`${textColor} bg-blue-500 text-white px-4 py-2 rounded-lg`}
           >
             Post Reply
           </button>

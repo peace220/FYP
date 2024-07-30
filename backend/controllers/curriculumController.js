@@ -18,7 +18,10 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }).fields([
+  { name: "video", maxCount: 1 },
+  { name: "transcript", maxCount: 1 },
+]);
 
 const insertCourse = (req, res) => {
   const userId = req.userId;
@@ -44,9 +47,9 @@ const getCourses = (req, res) => {
 
 const getSelectedCourses = (req, res) => {
   const userId = req.userId;
-  const course_id = req.params.course_id;
+  const course_id = req.params.courseId;
   const sql =
-    "SELECT * FROM Courses WHERE status = 'active' && user_id = ? && course_id = ?";
+    "SELECT * FROM Courses WHERE status != 'disable' && user_id = ? && id = ?";
   db.query(sql, [userId, course_id], (err, results) => {
     if (err) throw err;
     res.send(results);
@@ -212,10 +215,52 @@ const deleteLecture = (req, res) => {
   });
 };
 
+const updateVideo = (req, res) => {
+  const { lecture_id, section_id, course_id } = req.body;
+  const videoPath = req.files.video[0].path;
+  const videoName = req.files.video[0].filename;
+
+  const sql =
+    "UPDATE videos SET name = ?, path = ? WHERE course_id = ? AND section_id = ? AND lecture_id = ?";
+  db.query(
+    sql,
+    [videoName, videoPath, course_id, section_id, lecture_id],
+    (err, result) => {
+      if (err) throw err;
+
+      if (req.files.transcript) {
+        const transcriptPath = req.files.transcript[0].path;
+
+        fs.readFile(transcriptPath, "utf8", (err, transcriptContent) => {
+          if (err) throw err;
+
+          const transcriptSql =
+            "UPDATE Transcript SET transcript = ? WHERE video_id = (SELECT video_id FROM videos WHERE course_id = ? AND section_id = ? AND lecture_id = ?)";
+          db.query(
+            transcriptSql,
+            [transcriptContent, course_id, section_id, lecture_id],
+            (err) => {
+              if (err) throw err;
+              fs.unlinkSync(transcriptPath);
+              res.json({
+                message: "Video and transcript updated successfully",
+              });
+            }
+          );
+        });
+      } else {
+        res.json({
+          message: "Video updated successfully",
+        });
+      }
+    }
+  );
+};
+
 const uploadVideo = (req, res) => {
   const { lecture_id, section_id, course_id } = req.body;
-  const videoPath = req.file.path;
-  const videoName = req.file.filename;
+  const videoPath = req.files.video[0].path;
+  const videoName = req.files.video[0].filename;
 
   const sql =
     "INSERT INTO videos (course_id, section_id, lecture_id, name, path) VALUES (?, ?, ?, ?, ?)";
@@ -224,45 +269,33 @@ const uploadVideo = (req, res) => {
     [course_id, section_id, lecture_id, videoName, videoPath],
     (err, result) => {
       if (err) throw err;
-      res.json({
-        message: "Video uploaded successfully",
-        videoId: result.insertId,
-      });
+
+      if (req.files.transcript) {
+        const transcriptPath = req.files.transcript[0].path;
+        const videoId = result.insertId;
+
+        fs.readFile(transcriptPath, "utf8", (err, transcriptContent) => {
+          if (err) throw err;
+
+          const transcriptSql =
+            "INSERT INTO Transcript (video_id, transcript) VALUES (?, ?)";
+          db.query(transcriptSql, [videoId, transcriptContent], (err) => {
+            if (err) throw err;
+            fs.unlinkSync(transcriptPath);
+            res.json({
+              message: "Video and transcript uploaded successfully",
+              videoId: result.insertId,
+            });
+          });
+        });
+      } else {
+        res.json({
+          message: "Video uploaded successfully",
+          videoId: result.insertId,
+        });
+      }
     }
   );
-};
-
-const uploadTranscript = async (req, res) => {
-  if (!req.file) {
-    return res
-      .status(400)
-      .json({ success: false, message: "No file uploaded" });
-  }
-
-  const { videoId } = req.body;
-  const filePath = req.file.path;
-
-  try {
-    const transcriptContent = await fs.readFile(filePath, "utf8");
-
-    const [result] = await pool.execute(
-      "INSERT INTO transcripts (video_id, transcript) VALUES (?, ?)",
-      [videoId, transcriptContent]
-    );
-
-    await fs.unlink(filePath);
-
-    res.json({
-      success: true,
-      message: "Transcript uploaded and stored successfully",
-      id: result.insertId,
-    });
-  } catch (error) {
-    console.error("Error processing transcript:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Error processing transcript" });
-  }
 };
 
 const insertQuiz = (req, res) => {
@@ -613,4 +646,5 @@ module.exports = {
   insertQuestions,
   getQuestions,
   updateQuestions,
+  updateVideo,
 };

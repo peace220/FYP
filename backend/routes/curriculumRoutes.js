@@ -7,6 +7,7 @@ const {
   uploadVideo,upload,
   getVideos,
   insertQuestions, getQuestions, updateQuestions,
+  updateVideo,
 
 } = require("../controllers/curriculumController");
 const verifyToken = require("../middleware/authMiddleware");
@@ -24,7 +25,7 @@ router.post("/section", insertSection);
 router.post("/lecture", insertLecture);
 router.post("/questions", insertQuestions);
 router.post("/quiz", insertQuiz);
-router.post("/uploadVideo", upload.single("video"), uploadVideo);
+router.post("/uploadVideo", upload, uploadVideo);
 
 
 router.put("/courses/update", verifyToken, deleteCourses);
@@ -37,6 +38,7 @@ router.put("/quiz", updateQuiz);
 router.put("/quiz/update", deleteQuiz);
 router.put("/question", updateQuestions);
 router.put("/publish", publishCourse);
+router.put("/uploadVideo", upload, updateVideo)
 
 
 module.exports = router;
