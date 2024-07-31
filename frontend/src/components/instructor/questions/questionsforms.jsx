@@ -180,7 +180,7 @@ const QuestionForm = ({ item }) => {
                   onChange={(e) => handleOptionChange(index, e)}
                   className="w-full px-3 py-2 border rounded mr-2"
                   required
-                  placeholder={`${t("questions.option")} ${index + 1}`}
+                  placeholder={`${t("questions.options")} ${index + 1}`}
                 />
                 <label className="inline-flex items-center">
                   <input
